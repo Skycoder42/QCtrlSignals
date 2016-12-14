@@ -4,6 +4,8 @@
 #include <QSemaphore>
 #include <QThread>
 
+//TODO error handling
+
 namespace {
 static QSemaphore shutdownLock;
 }

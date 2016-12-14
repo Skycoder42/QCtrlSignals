@@ -17,6 +17,8 @@ QCtrlSignalHandler::QCtrlSignalHandler() :
 	d_ptr(QCtrlSignalHandlerPrivate::createInstance(this))
 {}
 
+QCtrlSignalHandler::~QCtrlSignalHandler() {}
+
 QCtrlSignalHandler *QCtrlSignalHandler::instance()
 {
 	return handler;

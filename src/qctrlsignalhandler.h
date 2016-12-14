@@ -8,6 +8,8 @@
 
 #ifdef Q_OS_WIN
 #include <qt_windows.h>
+#else
+#include <signal.h>
 #endif
 
 class QCtrlSignalHandlerPrivate;
@@ -25,6 +27,9 @@ public:
 #ifdef Q_OS_WIN
 		SigInt = CTRL_C_EVENT,
 		SigTerm = CTRL_BREAK_EVENT
+#else
+		SigInt = SIGINT,
+		SigTerm = SIGTERM
 #endif
 	};
 
@@ -59,6 +64,7 @@ private:
 	QScopedPointer<QCtrlSignalHandlerPrivate> d_ptr;
 
 	explicit QCtrlSignalHandler();
+	~QCtrlSignalHandler();
 };
 
 #endif // QCTRLSIGNALHANDLER_H
