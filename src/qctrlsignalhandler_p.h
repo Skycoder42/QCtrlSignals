@@ -3,6 +3,7 @@
 
 #include "qctrlsignalhandler.h"
 #include <QHash>
+#include <QReadWriteLock>
 #include <QSet>
 
 class QCtrlSignalHandlerPrivate
@@ -20,6 +21,8 @@ public:
 	QSet<int> activeSignals;
 	QHash<int, std::function<bool(int)>> callbacks;
 	bool autoShut;
+
+	virtual QReadWriteLock *lock() const = 0;
 
 protected:
 	QCtrlSignalHandlerPrivate(QCtrlSignalHandler *q_ptr);

@@ -15,7 +15,11 @@ public:
 	bool unregisterSignal(int) override;
 	void changeAutoShutMode(bool) override;
 
+	QReadWriteLock *lock() const override;
+
 private:
+	mutable QReadWriteLock rwLock;
+
 	bool handleAutoShut(DWORD signal);
 
 	static BOOL WINAPI HandlerRoutine(_In_ DWORD dwCtrlType);

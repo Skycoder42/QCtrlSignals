@@ -1,6 +1,7 @@
 #include "qctrlsignalhandler.h"
 #include "qctrlsignalhandler_p.h"
 #include <QGlobalStatic>
+#include <qdebug.h>
 
 class QCtrlSignalHandlerInstance : public QCtrlSignalHandler {
 public:
@@ -28,6 +29,7 @@ bool QCtrlSignalHandler::registerSynchronousSignalHandler(int signal, std::funct
 
 bool QCtrlSignalHandler::registerSynchronousSignalHandler(int signal, std::function<bool (int)> handler, bool registerSignal)
 {
+	QWriteLocker lock(d_ptr->lock());
 	d_ptr->callbacks.insert(signal, handler);
 	if(registerSignal)
 		return registerForSignal(signal);
@@ -37,6 +39,7 @@ bool QCtrlSignalHandler::registerSynchronousSignalHandler(int signal, std::funct
 
 bool QCtrlSignalHandler::unregisterSynchronousSignalHandler(int signal, bool unregisterSignal)
 {
+	QWriteLocker lock(d_ptr->lock());
 	d_ptr->callbacks.remove(signal);
 	if(unregisterSignal)
 		return unregisterFromSignal(signal);
@@ -46,6 +49,7 @@ bool QCtrlSignalHandler::unregisterSynchronousSignalHandler(int signal, bool unr
 
 bool QCtrlSignalHandler::registerForSignal(int signal)
 {
+	QWriteLocker lock(d_ptr->lock());
 	if(!d_ptr->activeSignals.contains(signal)) {
 		if(d_ptr->registerSignal(signal)) {
 			d_ptr->activeSignals.insert(signal);
@@ -58,6 +62,7 @@ bool QCtrlSignalHandler::registerForSignal(int signal)
 
 bool QCtrlSignalHandler::unregisterFromSignal(int signal)
 {
+	QWriteLocker lock(d_ptr->lock());
 	if(d_ptr->activeSignals.contains(signal)) {
 		if(d_ptr->unregisterSignal(signal)) {
 			d_ptr->activeSignals.remove(signal);
@@ -70,16 +75,19 @@ bool QCtrlSignalHandler::unregisterFromSignal(int signal)
 
 bool QCtrlSignalHandler::isEnabled() const
 {
+	QReadLocker lock(d_ptr->lock());
 	return d_ptr->enabled;
 }
 
 bool QCtrlSignalHandler::isAutoShutActive() const
 {
+	QReadLocker lock(d_ptr->lock());
 	return d_ptr->autoShut;
 }
 
 bool QCtrlSignalHandler::setEnabled(bool enabled)
 {
+	QWriteLocker lock(d_ptr->lock());
 	if (d_ptr->enabled == enabled)
 		return true;
 
@@ -92,6 +100,7 @@ bool QCtrlSignalHandler::setEnabled(bool enabled)
 
 void QCtrlSignalHandler::setAutoShutActive(bool autoShutActive)
 {
+	QWriteLocker lock(d_ptr->lock());
 	if (d_ptr->autoShut == autoShutActive)
 		return;
 
@@ -111,6 +120,7 @@ QCtrlSignalHandlerPrivate::QCtrlSignalHandlerPrivate(QCtrlSignalHandler *q_ptr) 
 
 bool QCtrlSignalHandlerPrivate::reportSignalTriggered(int signal)
 {
+	//Not locked, because this method is called by the signal handler, which should do the lock, if required
 	auto handler = callbacks.value(signal);
 	if(!handler || !handler(signal)) {
 		if(signal == QCtrlSignalHandler::SigInt)

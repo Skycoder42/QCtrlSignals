@@ -14,7 +14,8 @@ QCtrlSignalHandlerPrivate *QCtrlSignalHandlerPrivate::createInstance(QCtrlSignal
 }
 
 QCtrlSignalHandlerWin::QCtrlSignalHandlerWin(QCtrlSignalHandler *q_ptr) :
-	QCtrlSignalHandlerPrivate(q_ptr)
+	QCtrlSignalHandlerPrivate(q_ptr),
+	rwLock(QReadWriteLock::Recursive)
 {}
 
 bool QCtrlSignalHandlerWin::setSignalHandlerEnabled(bool enabled)
@@ -33,6 +34,11 @@ bool QCtrlSignalHandlerWin::unregisterSignal(int)
 }
 
 void QCtrlSignalHandlerWin::changeAutoShutMode(bool) {}
+
+QReadWriteLock *QCtrlSignalHandlerWin::lock() const
+{
+	return &rwLock;
+}
 
 bool QCtrlSignalHandlerWin::handleAutoShut(DWORD signal)
 {
@@ -58,6 +64,7 @@ bool QCtrlSignalHandlerWin::handleAutoShut(DWORD signal)
 BOOL QCtrlSignalHandlerWin::HandlerRoutine(DWORD dwCtrlType)
 {
 	auto self = p_instance<QCtrlSignalHandlerWin>();
+	QReadLocker lock(self->lock());
 	if(self->autoShut && self->handleAutoShut(dwCtrlType))
 		return TRUE;
 	else if(self->activeSignals.contains((int)dwCtrlType) &&
