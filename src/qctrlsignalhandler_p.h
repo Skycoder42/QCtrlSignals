@@ -14,8 +14,10 @@ class QCtrlSignalHandlerPrivate
 public:
 	QCtrlSignalHandlerPrivate(QCtrlSignalHandler *q_ptr);
 
+	bool enabled;
 	QSet<int> activeSignals;
 	QHash<int, std::function<bool(int)>> callbacks;
+	bool autoShut;
 
 	bool registerHandler();
 	bool unregisterHandler();
@@ -26,6 +28,7 @@ private:
 	QCtrlSignalHandler *q_ptr;
 
 	bool reportSignalTriggered(int signal);
+	bool handleAutoShut(int signal);
 
 #ifdef Q_OS_WIN
 	static BOOL WINAPI HandlerRoutine(_In_ DWORD dwCtrlType);

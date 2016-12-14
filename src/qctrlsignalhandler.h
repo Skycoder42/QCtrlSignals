@@ -18,6 +18,7 @@ class QCtrlSignalHandler : public QObject
 	friend class QCtrlSignalHandlerInstance;
 
 	Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY enabledChanged)
+	Q_PROPERTY(bool autoShutActive READ isAutoShutActive WRITE setAutoShutActive NOTIFY autoShutActiveChanged)
 
 public:
 	enum CommonSignals {
@@ -36,10 +37,12 @@ public:
 	void enableAsyncSignal(int signal);
 	void disableAsyncSignal(int signal);
 
-	bool isEnabled() const;
+	bool isEnabled() const;	
+	bool isAutoShutActive() const;
 
 public slots:
-	bool setEnabled(bool enabled);
+	bool setEnabled(bool enabled);	
+	void setAutoShutActive(bool autoShutActive);
 
 signals:
 	//common, asynchrounus signals
@@ -49,13 +52,13 @@ signals:
 	//other signals
 	void ctrlSignal(int signal);
 
-	void enabledChanged(bool enabled);
+	void enabledChanged(bool enabled);	
+	void autoShutActiveChanged(bool autoShutActive);
 
 private:
 	QScopedPointer<QCtrlSignalHandlerPrivate> d_ptr;
 
 	explicit QCtrlSignalHandler();
-	bool enabled;
 };
 
 #endif // QCTRLSIGNALHANDLER_H

@@ -48,12 +48,17 @@ void QCtrlSignalHandler::disableAsyncSignal(int signal)
 
 bool QCtrlSignalHandler::isEnabled() const
 {
-	return enabled;
+	return d_ptr->enabled;
+}
+
+bool QCtrlSignalHandler::isAutoShutActive() const
+{
+	return d_ptr->autoShut;
 }
 
 bool QCtrlSignalHandler::setEnabled(bool enabled)
 {
-	if (this->enabled == enabled)
+	if (d_ptr->enabled == enabled)
 		return true;
 
 	if(enabled) {
@@ -63,9 +68,18 @@ bool QCtrlSignalHandler::setEnabled(bool enabled)
 		if(!d_ptr->unregisterHandler())
 			return false;
 	}
-	this->enabled = enabled;
+	d_ptr->enabled = enabled;
 	emit enabledChanged(enabled);
 	return true;
+}
+
+void QCtrlSignalHandler::setAutoShutActive(bool autoShutActive)
+{
+	if (d_ptr->autoShut == autoShutActive)
+		return;
+
+	d_ptr->autoShut = autoShutActive;
+	emit autoShutActiveChanged(autoShutActive);
 }
 
 
@@ -83,7 +97,9 @@ bool QCtrlSignalHandlerPrivate::reportSignalTriggered(int signal)
 {
 	auto handler = callbacks.value(signal);
 	if(!handler || !handler(signal)) {
-		if(activeSignals.contains(signal)) {
+		if(autoShut && handleAutoShut(signal))
+			return true;
+		else if(activeSignals.contains(signal)) {
 			if(signal == QCtrlSignalHandler::SigInt)
 				return QMetaObject::invokeMethod(q_ptr, "sigInt", Qt::QueuedConnection);
 			else if(signal == QCtrlSignalHandler::SigTerm)
