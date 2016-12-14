@@ -30,12 +30,12 @@ public:
 
 	static QCtrlSignalHandler *instance();
 
-	void registerSynchronousSignalHandler(int signal, std::function<bool()> handler);
-	void registerSynchronousSignalHandler(int signal, std::function<bool(int)> handler);
-	void unregisterSynchronousSignalHandler(int signal);
+	bool registerSynchronousSignalHandler(int signal, std::function<bool()> handler, bool registerSignal = true);
+	bool registerSynchronousSignalHandler(int signal, std::function<bool(int)> handler, bool registerSignal = true);
+	bool unregisterSynchronousSignalHandler(int signal, bool unregisterSignal = true);
 
-	void enableAsyncSignal(int signal);
-	void disableAsyncSignal(int signal);
+	bool registerForSignal(int signal);
+	bool unregisterFromSignal(int signal);
 
 	bool isEnabled() const;	
 	bool isAutoShutActive() const;

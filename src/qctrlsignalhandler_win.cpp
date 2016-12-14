@@ -1,5 +1,4 @@
-#include "qctrlsignalhandler.h"
-#include "qctrlsignalhandler_p.h"
+#include "qctrlsignalhandler_win.h"
 
 #include <QCoreApplication>
 #include <QSemaphore>
@@ -9,17 +8,33 @@ namespace {
 static QSemaphore shutdownLock;
 }
 
-bool QCtrlSignalHandlerPrivate::registerHandler()
+QCtrlSignalHandlerPrivate *QCtrlSignalHandlerPrivate::createInstance(QCtrlSignalHandler *q_ptr)
 {
-	return ::SetConsoleCtrlHandler(HandlerRoutine, TRUE);
+	return new QCtrlSignalHandlerWin(q_ptr);
 }
 
-bool QCtrlSignalHandlerPrivate::unregisterHandler()
+QCtrlSignalHandlerWin::QCtrlSignalHandlerWin(QCtrlSignalHandler *q_ptr) :
+	QCtrlSignalHandlerPrivate(q_ptr)
+{}
+
+bool QCtrlSignalHandlerWin::setSignalHandlerEnabled(bool enabled)
 {
-	return ::SetConsoleCtrlHandler(HandlerRoutine, FALSE);
+	return ::SetConsoleCtrlHandler(HandlerRoutine, enabled);
 }
 
-bool QCtrlSignalHandlerPrivate::handleAutoShut(int signal)
+bool QCtrlSignalHandlerWin::registerSignal(int)
+{
+	return true;
+}
+
+bool QCtrlSignalHandlerWin::unregisterSignal(int)
+{
+	return true;
+}
+
+void QCtrlSignalHandlerWin::changeAutoShutMode(bool) {}
+
+bool QCtrlSignalHandlerWin::handleAutoShut(DWORD signal)
 {
 	switch (signal) {
 	case CTRL_C_EVENT:
@@ -40,10 +55,13 @@ bool QCtrlSignalHandlerPrivate::handleAutoShut(int signal)
 	}
 }
 
-BOOL QCtrlSignalHandlerPrivate::HandlerRoutine(DWORD dwCtrlType)
+BOOL QCtrlSignalHandlerWin::HandlerRoutine(DWORD dwCtrlType)
 {
-	auto self = p_instance();
-	if(self->reportSignalTriggered(dwCtrlType))
+	auto self = p_instance<QCtrlSignalHandlerWin>();
+	if(self->autoShut && self->handleAutoShut(dwCtrlType))
+		return TRUE;
+	else if(self->activeSignals.contains((int)dwCtrlType) &&
+			self->reportSignalTriggered((int)dwCtrlType))
 		return TRUE;
 	else
 		return FALSE;

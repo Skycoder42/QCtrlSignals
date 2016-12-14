@@ -13,7 +13,7 @@ Q_GLOBAL_STATIC(QCtrlSignalHandlerInstance, handler)
 
 QCtrlSignalHandler::QCtrlSignalHandler() :
 	QObject(),
-	d_ptr(new QCtrlSignalHandlerPrivate(this))
+	d_ptr(QCtrlSignalHandlerPrivate::createInstance(this))
 {}
 
 QCtrlSignalHandler *QCtrlSignalHandler::instance()
@@ -21,29 +21,51 @@ QCtrlSignalHandler *QCtrlSignalHandler::instance()
 	return handler;
 }
 
-void QCtrlSignalHandler::registerSynchronousSignalHandler(int signal, std::function<bool ()> handler)
+bool QCtrlSignalHandler::registerSynchronousSignalHandler(int signal, std::function<bool ()> handler, bool registerSignal)
 {
-	d_ptr->callbacks.insert(signal, [=](int){return handler();});
+	return registerSynchronousSignalHandler(signal, [=](int){return handler();}, registerSignal);
 }
 
-void QCtrlSignalHandler::registerSynchronousSignalHandler(int signal, std::function<bool (int)> handler)
+bool QCtrlSignalHandler::registerSynchronousSignalHandler(int signal, std::function<bool (int)> handler, bool registerSignal)
 {
 	d_ptr->callbacks.insert(signal, handler);
+	if(registerSignal)
+		return registerForSignal(signal);
+	else
+		return true;
 }
 
-void QCtrlSignalHandler::unregisterSynchronousSignalHandler(int signal)
+bool QCtrlSignalHandler::unregisterSynchronousSignalHandler(int signal, bool unregisterSignal)
 {
 	d_ptr->callbacks.remove(signal);
+	if(unregisterSignal)
+		return unregisterFromSignal(signal);
+	else
+		return true;
 }
 
-void QCtrlSignalHandler::enableAsyncSignal(int signal)
+bool QCtrlSignalHandler::registerForSignal(int signal)
 {
-	d_ptr->activeSignals.insert(signal);
+	if(!d_ptr->activeSignals.contains(signal)) {
+		if(d_ptr->registerSignal(signal)) {
+			d_ptr->activeSignals.insert(signal);
+			return true;
+		} else
+			return false;
+	} else
+		return true;
 }
 
-void QCtrlSignalHandler::disableAsyncSignal(int signal)
+bool QCtrlSignalHandler::unregisterFromSignal(int signal)
 {
-	d_ptr->activeSignals.remove(signal);
+	if(d_ptr->activeSignals.contains(signal)) {
+		if(d_ptr->unregisterSignal(signal)) {
+			d_ptr->activeSignals.remove(signal);
+			return true;
+		} else
+			return false;
+	} else
+		return true;
 }
 
 bool QCtrlSignalHandler::isEnabled() const
@@ -61,13 +83,8 @@ bool QCtrlSignalHandler::setEnabled(bool enabled)
 	if (d_ptr->enabled == enabled)
 		return true;
 
-	if(enabled) {
-		if(!d_ptr->registerHandler())
-			return false;
-	} else {
-		if(!d_ptr->unregisterHandler())
-			return false;
-	}
+	if(!d_ptr->setSignalHandlerEnabled(enabled))
+		return false;
 	d_ptr->enabled = enabled;
 	emit enabledChanged(enabled);
 	return true;
@@ -85,31 +102,25 @@ void QCtrlSignalHandler::setAutoShutActive(bool autoShutActive)
 
 
 QCtrlSignalHandlerPrivate::QCtrlSignalHandlerPrivate(QCtrlSignalHandler *q_ptr) :
-	q_ptr(q_ptr)
+	q_ptr(q_ptr),
+	enabled(false),
+	activeSignals(),
+	callbacks(),
+	autoShut(false)
 {}
-
-QCtrlSignalHandlerPrivate *QCtrlSignalHandlerPrivate::p_instance()
-{
-	return handler->d_ptr.data();
-}
 
 bool QCtrlSignalHandlerPrivate::reportSignalTriggered(int signal)
 {
 	auto handler = callbacks.value(signal);
 	if(!handler || !handler(signal)) {
-		if(autoShut && handleAutoShut(signal))
-			return true;
-		else if(activeSignals.contains(signal)) {
-			if(signal == QCtrlSignalHandler::SigInt)
-				return QMetaObject::invokeMethod(q_ptr, "sigInt", Qt::QueuedConnection);
-			else if(signal == QCtrlSignalHandler::SigTerm)
-				return QMetaObject::invokeMethod(q_ptr, "sigTerm", Qt::QueuedConnection);
-			else {
-				return QMetaObject::invokeMethod(q_ptr, "ctrlSignal", Qt::QueuedConnection,
-												 Q_ARG(int, signal));
-			}
-		} else
-			return false;
+		if(signal == QCtrlSignalHandler::SigInt)
+			return QMetaObject::invokeMethod(q_ptr, "sigInt", Qt::QueuedConnection);
+		else if(signal == QCtrlSignalHandler::SigTerm)
+			return QMetaObject::invokeMethod(q_ptr, "sigTerm", Qt::QueuedConnection);
+		else {
+			return QMetaObject::invokeMethod(q_ptr, "ctrlSignal", Qt::QueuedConnection,
+											 Q_ARG(int, signal));
+		}
 	} else//handler handelt it
 		return true;
 }

@@ -5,34 +5,33 @@
 #include <QHash>
 #include <QSet>
 
-#ifdef Q_OS_WIN
-#include <qt_windows.h>
-#endif
-
 class QCtrlSignalHandlerPrivate
 {
 public:
-	QCtrlSignalHandlerPrivate(QCtrlSignalHandler *q_ptr);
+	static QCtrlSignalHandlerPrivate *createInstance(QCtrlSignalHandler *q_ptr);
+
+	virtual bool setSignalHandlerEnabled(bool enabled) = 0;
+	virtual bool registerSignal(int signal) = 0;
+	virtual bool unregisterSignal(int signal) = 0;
+
+	virtual void changeAutoShutMode(bool enabled) = 0;
 
 	bool enabled;
 	QSet<int> activeSignals;
 	QHash<int, std::function<bool(int)>> callbacks;
 	bool autoShut;
 
-	bool registerHandler();
-	bool unregisterHandler();
+protected:
+	QCtrlSignalHandlerPrivate(QCtrlSignalHandler *q_ptr);
 
-private:
-	static QCtrlSignalHandlerPrivate *p_instance();
-
-	QCtrlSignalHandler *q_ptr;
+	template <typename T>
+	static T *p_instance() {
+		return static_cast<T*>(QCtrlSignalHandler::instance()->d_ptr.data());
+	}
 
 	bool reportSignalTriggered(int signal);
-	bool handleAutoShut(int signal);
 
-#ifdef Q_OS_WIN
-	static BOOL WINAPI HandlerRoutine(_In_ DWORD dwCtrlType);
-#endif
+	QCtrlSignalHandler *q_ptr;
 };
 
 #endif // QCTRLSIGNALHANDLERPRIVATE_H

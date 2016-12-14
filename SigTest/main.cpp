@@ -19,8 +19,8 @@ int main(int argc, char *argv[])
 		QThread::sleep(2);
 		return true;
 	});
-	handler->enableAsyncSignal(QCtrlSignalHandler::SigInt);
-	handler->enableAsyncSignal(QCtrlSignalHandler::SigTerm);
+	handler->registerForSignal(QCtrlSignalHandler::SigInt);
+	handler->registerForSignal(QCtrlSignalHandler::SigTerm);
 
 	QObject::connect(handler, &QCtrlSignalHandler::sigInt, qApp, [](){
 		qDebug() << "SIGINT";
