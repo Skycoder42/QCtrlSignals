@@ -50,7 +50,7 @@ bool QCtrlSignalHandlerWin::handleAutoShut(DWORD signal)
 		QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
 		return true;
 	case CTRL_CLOSE_EVENT:
-		QObject::connect(qApp, &QCoreApplication::destroyed, qApp, [&](){
+		QObject::connect(qApp, &QCoreApplication::destroyed, qApp, [&](){//will be executed in the main thread
 			shutdownLock.release();
 			QThread::msleep(250);//give the killer thread time to exit the process
 		}, Qt::DirectConnection);

@@ -13,14 +13,6 @@ int main(int argc, char *argv[])
 
 	auto handler = QCtrlSignalHandler::instance();
 #if MODE == CUSTOM_HANDLERS
-#ifdef Q_OS_WIN
-	qDebug() << "sigclose reg" << handler->registerSynchronousSignalHandler(CTRL_CLOSE_EVENT, [](){
-		qDebug() << "CTRL_CLOSE_EVENT";
-		qDebug() << qApp->thread() << QThread::currentThread();
-		QThread::sleep(2);
-		return true;
-	});
-#endif
 	qDebug() << "sigint reg" << handler->registerForSignal(QCtrlSignalHandler::SigInt);
 	qDebug() << "sigterm reg" << handler->registerForSignal(QCtrlSignalHandler::SigTerm);
 
@@ -32,6 +24,17 @@ int main(int argc, char *argv[])
 		qDebug() << "SIGTERM";
 		qDebug() << qApp->thread() << QThread::currentThread();
 	});
+
+#ifdef Q_OS_WIN
+	//cannot handle CTRL_CLOSE_EVENT asynchronously
+#else
+	qDebug() << "SIGQUIT reg" << handler->registerForSignal(SIGQUIT);
+	QObject::connect(handler, &QCtrlSignalHandler::ctrlSignal, qApp, [](int signal){
+		qDebug() << "SIGNAL" << signal << "(3 -> SIGQUIT)";
+	});
+
+	//cannot handle SIGHUP asynchronously
+#endif
 #elif MODE == AUTO_SHUTDOWN
 	QObject::connect(qApp, &QCoreApplication::aboutToQuit, qApp, [](){
 		qDebug() << "App about to quit!";

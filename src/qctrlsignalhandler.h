@@ -35,10 +35,6 @@ public:
 
 	static QCtrlSignalHandler *instance();
 
-	bool registerSynchronousSignalHandler(int signal, std::function<bool()> handler, bool registerSignal = true);
-	bool registerSynchronousSignalHandler(int signal, std::function<bool(int)> handler, bool registerSignal = true);
-	bool unregisterSynchronousSignalHandler(int signal, bool unregisterSignal = true);
-
 	bool registerForSignal(int signal);
 	bool unregisterFromSignal(int signal);
 

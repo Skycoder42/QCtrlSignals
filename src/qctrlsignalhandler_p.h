@@ -11,6 +11,8 @@ class QCtrlSignalHandlerPrivate
 public:
 	static QCtrlSignalHandlerPrivate *createInstance(QCtrlSignalHandler *q_ptr);
 
+	virtual ~QCtrlSignalHandlerPrivate();
+
 	virtual bool setSignalHandlerEnabled(bool enabled) = 0;
 	virtual bool registerSignal(int signal) = 0;
 	virtual bool unregisterSignal(int signal) = 0;
@@ -19,7 +21,6 @@ public:
 
 	bool enabled;
 	QSet<int> activeSignals;
-	QHash<int, std::function<bool(int)>> callbacks;
 	bool autoShut;
 
 	virtual QReadWriteLock *lock() const = 0;

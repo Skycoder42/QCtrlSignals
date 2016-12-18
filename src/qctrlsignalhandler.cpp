@@ -24,31 +24,6 @@ QCtrlSignalHandler *QCtrlSignalHandler::instance()
 	return handler;
 }
 
-bool QCtrlSignalHandler::registerSynchronousSignalHandler(int signal, std::function<bool ()> handler, bool registerSignal)
-{
-	return registerSynchronousSignalHandler(signal, [=](int){return handler();}, registerSignal);
-}
-
-bool QCtrlSignalHandler::registerSynchronousSignalHandler(int signal, std::function<bool (int)> handler, bool registerSignal)
-{
-	QWriteLocker lock(d_ptr->lock());
-	d_ptr->callbacks.insert(signal, handler);
-	if(registerSignal)
-		return registerForSignal(signal);
-	else
-		return true;
-}
-
-bool QCtrlSignalHandler::unregisterSynchronousSignalHandler(int signal, bool unregisterSignal)
-{
-	QWriteLocker lock(d_ptr->lock());
-	d_ptr->callbacks.remove(signal);
-	if(unregisterSignal)
-		return unregisterFromSignal(signal);
-	else
-		return true;
-}
-
 bool QCtrlSignalHandler::registerForSignal(int signal)
 {
 	QWriteLocker lock(d_ptr->lock());
@@ -113,26 +88,23 @@ void QCtrlSignalHandler::setAutoShutActive(bool autoShutActive)
 
 
 QCtrlSignalHandlerPrivate::QCtrlSignalHandlerPrivate(QCtrlSignalHandler *q_ptr) :
-	q_ptr(q_ptr),
 	enabled(false),
 	activeSignals(),
-	callbacks(),
-	autoShut(false)
+	autoShut(false),
+	q_ptr(q_ptr)
 {}
+
+QCtrlSignalHandlerPrivate::~QCtrlSignalHandlerPrivate() {}
 
 bool QCtrlSignalHandlerPrivate::reportSignalTriggered(int signal)
 {
 	//Not locked, because this method is called by the signal handler, which should do the lock, if required
-	auto handler = callbacks.value(signal);
-	if(!handler || !handler(signal)) {
-		if(signal == QCtrlSignalHandler::SigInt)
-			return QMetaObject::invokeMethod(q_ptr, "sigInt", Qt::QueuedConnection);
-		else if(signal == QCtrlSignalHandler::SigTerm)
-			return QMetaObject::invokeMethod(q_ptr, "sigTerm", Qt::QueuedConnection);
-		else {
-			return QMetaObject::invokeMethod(q_ptr, "ctrlSignal", Qt::QueuedConnection,
-											 Q_ARG(int, signal));
-		}
-	} else//handler handelt it
-		return true;
+	if(signal == QCtrlSignalHandler::SigInt)
+		return QMetaObject::invokeMethod(q_ptr, "sigInt", Qt::QueuedConnection);
+	else if(signal == QCtrlSignalHandler::SigTerm)
+		return QMetaObject::invokeMethod(q_ptr, "sigTerm", Qt::QueuedConnection);
+	else {
+		return QMetaObject::invokeMethod(q_ptr, "ctrlSignal", Qt::QueuedConnection,
+										 Q_ARG(int, signal));
+	}
 }
