@@ -13,8 +13,8 @@ int main(int argc, char *argv[])
 
 	auto handler = QCtrlSignalHandler::instance();
 #if MODE == CUSTOM_HANDLERS
-	qDebug() << "sigint reg" << handler->registerForSignal(QCtrlSignalHandler::SigInt);
-	qDebug() << "sigterm reg" << handler->registerForSignal(QCtrlSignalHandler::SigTerm);
+	qDebug() << "SIGINT reg" << handler->registerForSignal(QCtrlSignalHandler::SigInt);
+	qDebug() << "SIGTERM reg" << handler->registerForSignal(QCtrlSignalHandler::SigTerm);
 
 	QObject::connect(handler, &QCtrlSignalHandler::sigInt, qApp, [](){
 		qDebug() << "SIGINT";
@@ -41,6 +41,9 @@ int main(int argc, char *argv[])
 		QThread::sleep(1);
 	}, Qt::DirectConnection);
 	handler->setAutoShutActive(true);
+
+	qDebug() << "SIGINT reg" << handler->registerForSignal(QCtrlSignalHandler::SigInt) << "(should be false)";
+	qDebug() << "SIGTERM reg" << handler->registerForSignal(QCtrlSignalHandler::SigTerm) << "(should be false)";
 #endif
 
 	qDebug() << "enable" << handler->setEnabled(true);

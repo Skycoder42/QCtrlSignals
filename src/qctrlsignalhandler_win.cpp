@@ -25,14 +25,14 @@ bool QCtrlSignalHandlerWin::setSignalHandlerEnabled(bool enabled)
 	return ::SetConsoleCtrlHandler(HandlerRoutine, enabled);
 }
 
-bool QCtrlSignalHandlerWin::registerSignal(int)
+bool QCtrlSignalHandlerWin::registerSignal(int signal)
 {
-	return true;
+	return testNotAutoShut(signal);
 }
 
-bool QCtrlSignalHandlerWin::unregisterSignal(int)
+bool QCtrlSignalHandlerWin::unregisterSignal(int signal)
 {
-	return true;
+	return testNotAutoShut(signal);
 }
 
 void QCtrlSignalHandlerWin::changeAutoShutMode(bool) {}
@@ -40,6 +40,18 @@ void QCtrlSignalHandlerWin::changeAutoShutMode(bool) {}
 QReadWriteLock *QCtrlSignalHandlerWin::lock() const
 {
 	return &rwLock;
+}
+
+bool QCtrlSignalHandlerWin::testNotAutoShut(int signal)
+{
+	if(autoshut) {
+		if(signal == CTRL_C_EVENT ||
+		   signal == CTRL_BREAK_EVENT ||
+		   signal == CTRL_CLOSE_EVENT)
+			return false;
+	}
+
+	return true;
 }
 
 bool QCtrlSignalHandlerWin::handleAutoShut(DWORD signal)

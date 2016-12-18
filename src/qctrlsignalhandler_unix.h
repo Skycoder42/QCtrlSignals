@@ -25,7 +25,9 @@ private slots:
 private:
 	QSocketNotifier *socketNotifier;
 
-	bool updateSignalHandler(int signal, bool active);
+	bool testNotAutoShut(int signal);
+	bool updateSignalHandler(int signal, bool active, bool overwriteAutoShut = false);
+	void updateAutoShut(bool enabled);
 
 	static int sockpair[2];
 	static void unixSignalHandler(int signal);

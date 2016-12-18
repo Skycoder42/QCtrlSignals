@@ -1,4 +1,5 @@
 #include "qctrlsignalhandler_unix.h"
+#include <QCoreApplication>
 #include <unistd.h>
 #include <sys/socket.h>
 
@@ -29,9 +30,11 @@ bool QCtrlSignalHandlerUnix::setSignalHandlerEnabled(bool enabled)
 {
 	auto ok = true;
 	foreach(auto signal, activeSignals) {
-		if(!updateSignalHandler(signal, enabled))
+		if(!updateSignalHandler(signal, enabled, true))//allow overwrite, to avoid errors, autoshut "corrects" it after
 			ok = false;
 	}
+	if(autoShut)
+		updateAutoShut(enabled);
 	return ok;
 }
 
@@ -40,7 +43,7 @@ bool QCtrlSignalHandlerUnix::registerSignal(int signal)
 	if(enabled)
 		return updateSignalHandler(signal, true);
 	else
-		return true;
+		return testNotAutoShut(signal);
 }
 
 bool QCtrlSignalHandlerUnix::unregisterSignal(int signal)
@@ -48,11 +51,13 @@ bool QCtrlSignalHandlerUnix::unregisterSignal(int signal)
 	if(enabled)
 		return updateSignalHandler(signal, false);
 	else
-		return true;
+		return testNotAutoShut(signal);
 }
 
 void QCtrlSignalHandlerUnix::changeAutoShutMode(bool enabled)
 {
+	if(this->enabled)
+		updateAutoShut(enabled);
 }
 
 QReadWriteLock *QCtrlSignalHandlerUnix::lock() const
@@ -65,12 +70,29 @@ void QCtrlSignalHandlerUnix::socketNotifyTriggerd(int socket)
 	int signal;
 	::read(socket, &signal, sizeof(signal));
 
-	if(!autoShut/* || !handleAutoShut(signal)*/)
+	if(autoShut)
+		qApp->quit();
+	else
 		reportSignalTriggered(signal);
 }
 
-bool QCtrlSignalHandlerUnix::updateSignalHandler(int signal, bool active)
+bool QCtrlSignalHandlerUnix::testNotAutoShut(int signal)
 {
+	if(autoShut) {
+		if(signal == SIGINT ||
+		   signal == SIGTERM ||
+		   signal == SIGQUIT)
+			return false;
+	}
+
+	return true;
+}
+
+bool QCtrlSignalHandlerUnix::updateSignalHandler(int signal, bool active, bool overwriteAutoShut)
+{
+	if(!overwriteAutoShut && !testNotAutoShut(signal))
+		return false;
+
 	struct sigaction action;
 	action.sa_handler = active ? QCtrlSignalHandlerUnix::unixSignalHandler : SIG_DFL;
 	::sigemptyset(&action.sa_mask);
@@ -79,6 +101,14 @@ bool QCtrlSignalHandlerUnix::updateSignalHandler(int signal, bool active)
 		return false;
 	else
 		return true;
+}
+
+void QCtrlSignalHandlerUnix::updateAutoShut(bool enabled)
+{
+	updateSignalHandler(SIGINT, enabled, true);
+	updateSignalHandler(SIGTERM, enabled, true);
+	updateSignalHandler(SIGQUIT, enabled, true);
+	//TODO handle SIGHUB
 }
 
 void QCtrlSignalHandlerUnix::unixSignalHandler(int signal)
