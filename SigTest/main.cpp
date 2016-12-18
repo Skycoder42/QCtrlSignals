@@ -5,7 +5,7 @@
 
 #define CUSTOM_HANDLERS 0
 #define AUTO_SHUTDOWN 1
-#define MODE CUSTOM_HANDLERS
+#define MODE AUTO_SHUTDOWN
 
 int main(int argc, char *argv[])
 {

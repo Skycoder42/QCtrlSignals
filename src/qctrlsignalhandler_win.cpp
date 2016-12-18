@@ -44,7 +44,7 @@ QReadWriteLock *QCtrlSignalHandlerWin::lock() const
 
 bool QCtrlSignalHandlerWin::testNotAutoShut(int signal)
 {
-	if(autoshut) {
+	if(autoShut) {
 		if(signal == CTRL_C_EVENT ||
 		   signal == CTRL_BREAK_EVENT ||
 		   signal == CTRL_CLOSE_EVENT)
