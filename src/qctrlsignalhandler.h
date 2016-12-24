@@ -41,7 +41,7 @@ public:
 
 	//! Registers this handler for the given signal
 	bool registerForSignal(int signal);
-	//! Registers this handler from the given signal
+	//! Unregisters this handler from the given signal
 	bool unregisterFromSignal(int signal);
 
 	//! READ-Accessor for QCtrlSignalHandler::autoQuitActive
@@ -52,9 +52,9 @@ public slots:
 	void setAutoQuitActive(bool autoQuitActive);
 
 signals:
-	//! Shortcut signal for CommonSignals::SigInt
+	//! Shortcut signal for QCtrlSignalHandler::SigInt
 	void sigInt();
-	//! Shortcut signal for CommonSignals::SigTerm
+	//! Shortcut signal for QCtrlSignalHandler::SigTerm
 	void sigTerm();
 
 	//! Will be emitted if a registered signal occures

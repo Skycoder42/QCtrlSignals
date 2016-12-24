@@ -150,7 +150,7 @@ INLINE_INHERITED_MEMB  = NO
 # shortest path that makes the file name unique will be used
 # The default value is: YES.
 
-FULL_PATH_NAMES        = YES
+FULL_PATH_NAMES        = NO
 
 # The STRIP_FROM_PATH tag can be used to strip a user-defined part of the path.
 # Stripping is only done if one of the specified strings matches the left-hand
@@ -925,17 +925,17 @@ EXCLUDE_SYMBOLS        = QBasicAtomicInteger \
                          QBasicAtomicPointer \
                          QFutureWatcherBase \
                          QListSpecialMethods \
-						 QPaintEngineEx \
-						 QQmlExtensionInterface \
-						 QAbstractAspect \
-						 QComponent \
-						 QEntity \
-						 QGeometry \
-						 QGeometryRenderer \
-						 QMaterial \
-						 QNode \
-						 QNodeCreatedChangeBase \
-						 QTechniqueFilter
+                         QPaintEngineEx \
+                         QQmlExtensionInterface \
+                         QAbstractAspect \
+                         QComponent \
+                         QEntity \
+                         QGeometry \
+                         QGeometryRenderer \
+                         QMaterial \
+                         QNode \
+                         QNodeCreatedChangeBase \
+                         QTechniqueFilter
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or directories
 # that contain example code fragments that are included (see the \include
@@ -2174,34 +2174,34 @@ SKIP_FUNCTION_MACROS   = YES
 # the path). If a tag file is not located in the directory in which doxygen is
 # run, you must also specify the path to the tagfile here.
 
-TAGFILES				=	C:\Qt\Docs\Qt-5.7\activeqt\activeqt.tags=http://doc.qt.io/qt-5 \
-							C:\Qt\Docs\Qt-5.7\qdoc\qdoc.tags=http://doc.qt.io/qt-5 \
-							C:\Qt\Docs\Qt-5.7\qt3d\qt3d.tags=http://doc.qt.io/qt-5 \
-							C:\Qt\Docs\Qt-5.7\qtbluetooth\qtbluetooth.tags=http://doc.qt.io/qt-5 \
-							C:\Qt\Docs\Qt-5.7\qtconcurrent\qtconcurrent.tags=http://doc.qt.io/qt-5 \
-							C:\Qt\Docs\Qt-5.7\qtcore\qtcore.tags=http://doc.qt.io/qt-5 \
-							C:\Qt\Docs\Qt-5.7\qtgraphicaleffects\qtgraphicaleffects.tags=http://doc.qt.io/qt-5 \
-							C:\Qt\Docs\Qt-5.7\qtgui\qtgui.tags=http://doc.qt.io/qt-5 \
-							C:\Qt\Docs\Qt-5.7\qtlocation\qtlocation.tags=http://doc.qt.io/qt-5 \
-							C:\Qt\Docs\Qt-5.7\qtnetwork\qtnetwork.tags=http://doc.qt.io/qt-5 \
-							C:\Qt\Docs\Qt-5.7\qtnfc\qtnfc.tags=http://doc.qt.io/qt-5 \
-							C:\Qt\Docs\Qt-5.7\qtpositioning\qtpositioning.tags=http://doc.qt.io/qt-5 \
-							C:\Qt\Docs\Qt-5.7\qtprintsupport\qtprintsupport.tags=http://doc.qt.io/qt-5 \
-							C:\Qt\Docs\Qt-5.7\qtqml\qtqml.tags=http://doc.qt.io/qt-5 \
-							C:\Qt\Docs\Qt-5.7\qtquick\qtquick.tags=http://doc.qt.io/qt-5 \
-							C:\Qt\Docs\Qt-5.7\qtquickcontrols\qtquickcontrols.tags=http://doc.qt.io/qt-5 \
-							C:\Qt\Docs\Qt-5.7\qtquickcontrols2\qtquickcontrols2.tags=http://doc.qt.io/qt-5 \
-							C:\Qt\Docs\Qt-5.7\qtscxml\qtscxml.tags=http://doc.qt.io/qt-5 \
-							C:\Qt\Docs\Qt-5.7\qtsensors\qtsensors.tags=http://doc.qt.io/qt-5 \
-							C:\Qt\Docs\Qt-5.7\qtsql\qtsql.tags=http://doc.qt.io/qt-5 \
-							C:\Qt\Docs\Qt-5.7\qtsvg\qtsvg.tags=http://doc.qt.io/qt-5 \
-							C:\Qt\Docs\Qt-5.7\qttestlib\qttestlib.tags=http://doc.qt.io/qt-5 \
-							C:\Qt\Docs\Qt-5.7\qtwebchannel\qtwebchannel.tags=http://doc.qt.io/qt-5 \
-							C:\Qt\Docs\Qt-5.7\qtwebengine\qtwebengine.tags=http://doc.qt.io/qt-5 \
-							C:\Qt\Docs\Qt-5.7\qtwebsockets\qtwebsockets.tags=http://doc.qt.io/qt-5 \
-							C:\Qt\Docs\Qt-5.7\qtwidgets\qtwidgets.tags=http://doc.qt.io/qt-5 \
-							C:\Qt\Docs\Qt-5.7\qtxml\qtxml.tags=http://doc.qt.io/qt-5 \
-							C:\Qt\Docs\Qt-5.7\qtxmlpatterns\qtxmlpatterns.tags=http://doc.qt.io/qt-5
+TAGFILES               = C:\Qt\Docs\Qt-5.7\activeqt\activeqt.tags=http://doc.qt.io/qt-5 \
+                         C:\Qt\Docs\Qt-5.7\qdoc\qdoc.tags=http://doc.qt.io/qt-5 \
+                         C:\Qt\Docs\Qt-5.7\qt3d\qt3d.tags=http://doc.qt.io/qt-5 \
+                         C:\Qt\Docs\Qt-5.7\qtbluetooth\qtbluetooth.tags=http://doc.qt.io/qt-5 \
+                         C:\Qt\Docs\Qt-5.7\qtconcurrent\qtconcurrent.tags=http://doc.qt.io/qt-5 \
+                         C:\Qt\Docs\Qt-5.7\qtcore\qtcore.tags=http://doc.qt.io/qt-5 \
+                         C:\Qt\Docs\Qt-5.7\qtgraphicaleffects\qtgraphicaleffects.tags=http://doc.qt.io/qt-5 \
+                         C:\Qt\Docs\Qt-5.7\qtgui\qtgui.tags=http://doc.qt.io/qt-5 \
+                         C:\Qt\Docs\Qt-5.7\qtlocation\qtlocation.tags=http://doc.qt.io/qt-5 \
+                         C:\Qt\Docs\Qt-5.7\qtnetwork\qtnetwork.tags=http://doc.qt.io/qt-5 \
+                         C:\Qt\Docs\Qt-5.7\qtnfc\qtnfc.tags=http://doc.qt.io/qt-5 \
+                         C:\Qt\Docs\Qt-5.7\qtpositioning\qtpositioning.tags=http://doc.qt.io/qt-5 \
+                         C:\Qt\Docs\Qt-5.7\qtprintsupport\qtprintsupport.tags=http://doc.qt.io/qt-5 \
+                         C:\Qt\Docs\Qt-5.7\qtqml\qtqml.tags=http://doc.qt.io/qt-5 \
+                         C:\Qt\Docs\Qt-5.7\qtquick\qtquick.tags=http://doc.qt.io/qt-5 \
+                         C:\Qt\Docs\Qt-5.7\qtquickcontrols\qtquickcontrols.tags=http://doc.qt.io/qt-5 \
+                         C:\Qt\Docs\Qt-5.7\qtquickcontrols2\qtquickcontrols2.tags=http://doc.qt.io/qt-5 \
+                         C:\Qt\Docs\Qt-5.7\qtscxml\qtscxml.tags=http://doc.qt.io/qt-5 \
+                         C:\Qt\Docs\Qt-5.7\qtsensors\qtsensors.tags=http://doc.qt.io/qt-5 \
+                         C:\Qt\Docs\Qt-5.7\qtsql\qtsql.tags=http://doc.qt.io/qt-5 \
+                         C:\Qt\Docs\Qt-5.7\qtsvg\qtsvg.tags=http://doc.qt.io/qt-5 \
+                         C:\Qt\Docs\Qt-5.7\qttestlib\qttestlib.tags=http://doc.qt.io/qt-5 \
+                         C:\Qt\Docs\Qt-5.7\qtwebchannel\qtwebchannel.tags=http://doc.qt.io/qt-5 \
+                         C:\Qt\Docs\Qt-5.7\qtwebengine\qtwebengine.tags=http://doc.qt.io/qt-5 \
+                         C:\Qt\Docs\Qt-5.7\qtwebsockets\qtwebsockets.tags=http://doc.qt.io/qt-5 \
+                         C:\Qt\Docs\Qt-5.7\qtwidgets\qtwidgets.tags=http://doc.qt.io/qt-5 \
+                         C:\Qt\Docs\Qt-5.7\qtxml\qtxml.tags=http://doc.qt.io/qt-5 \
+                         C:\Qt\Docs\Qt-5.7\qtxmlpatterns\qtxmlpatterns.tags=http://doc.qt.io/qt-5
 
 # When a file name is specified after GENERATE_TAGFILE, doxygen will create a
 # tag file that is based on the input files it reads. See section "Linking to

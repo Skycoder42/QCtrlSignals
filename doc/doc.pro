@@ -2,4 +2,5 @@ TEMPLATE = aux
 
 DISTFILES += \
     doxyfile \
-    ../README.md
+    ../README.md \
+    qctrlsignalhandler.dox
