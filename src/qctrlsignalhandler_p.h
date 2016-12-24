@@ -13,13 +13,11 @@ public:
 
 	virtual ~QCtrlSignalHandlerPrivate();
 
-	virtual bool setSignalHandlerEnabled(bool enabled) = 0;
 	virtual bool registerSignal(int signal) = 0;
 	virtual bool unregisterSignal(int signal) = 0;
 
 	virtual void changeAutoShutMode(bool enabled) = 0;
 
-	bool enabled;
 	QSet<int> activeSignals;
 	bool autoShut;
 

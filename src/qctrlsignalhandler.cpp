@@ -3,6 +3,8 @@
 #include <QGlobalStatic>
 #include <qdebug.h>
 
+Q_LOGGING_CATEGORY(logQCtrlSignalHandler, "QCtrlSignalHandler")
+
 class QCtrlSignalHandlerInstance : public QCtrlSignalHandler {
 public:
 	inline QCtrlSignalHandlerInstance() :
@@ -50,29 +52,10 @@ bool QCtrlSignalHandler::unregisterFromSignal(int signal)
 		return true;
 }
 
-bool QCtrlSignalHandler::isEnabled() const
-{
-	QReadLocker lock(d_ptr->lock());
-	return d_ptr->enabled;
-}
-
 bool QCtrlSignalHandler::isAutoShutActive() const
 {
 	QReadLocker lock(d_ptr->lock());
 	return d_ptr->autoShut;
-}
-
-bool QCtrlSignalHandler::setEnabled(bool enabled)
-{
-	QWriteLocker lock(d_ptr->lock());
-	if (d_ptr->enabled == enabled)
-		return true;
-
-	if(!d_ptr->setSignalHandlerEnabled(enabled))
-		return false;
-	d_ptr->enabled = enabled;
-	emit enabledChanged(enabled);
-	return true;
 }
 
 void QCtrlSignalHandler::setAutoShutActive(bool autoShutActive)
@@ -88,7 +71,6 @@ void QCtrlSignalHandler::setAutoShutActive(bool autoShutActive)
 
 
 QCtrlSignalHandlerPrivate::QCtrlSignalHandlerPrivate(QCtrlSignalHandler *q_ptr) :
-	enabled(false),
 	activeSignals(),
 	autoShut(false),
 	q_ptr(q_ptr)

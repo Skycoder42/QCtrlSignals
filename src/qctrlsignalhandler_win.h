@@ -9,8 +9,8 @@ class QCtrlSignalHandlerWin : public QCtrlSignalHandlerPrivate
 {
 public:
 	QCtrlSignalHandlerWin(QCtrlSignalHandler *q_ptr);
+	~QCtrlSignalHandlerWin();
 
-	bool setSignalHandlerEnabled(bool enabled) override;
 	bool registerSignal(int signal) override;
 	bool unregisterSignal(int signal) override;
 	void changeAutoShutMode(bool) override;
@@ -20,10 +20,10 @@ public:
 private:
 	mutable QReadWriteLock rwLock;
 
-	bool testNotAutoShut(int signal);
 	bool handleAutoShut(DWORD signal);
 
 	static BOOL WINAPI HandlerRoutine(_In_ DWORD dwCtrlType);
+	static QString lastErrorMessage();
 };
 
 #endif // QCTRLSIGNALHANDLER_WIN_H

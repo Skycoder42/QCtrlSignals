@@ -3,8 +3,7 @@
 #include <QCoreApplication>
 #include <QSemaphore>
 #include <QThread>
-
-//TODO error handling
+#include <QDebug>
 
 namespace {
 static QSemaphore shutdownLock;
@@ -18,21 +17,37 @@ QCtrlSignalHandlerPrivate *QCtrlSignalHandlerPrivate::createInstance(QCtrlSignal
 QCtrlSignalHandlerWin::QCtrlSignalHandlerWin(QCtrlSignalHandler *q_ptr) :
 	QCtrlSignalHandlerPrivate(q_ptr),
 	rwLock(QReadWriteLock::Recursive)
-{}
-
-bool QCtrlSignalHandlerWin::setSignalHandlerEnabled(bool enabled)
 {
-	return ::SetConsoleCtrlHandler(HandlerRoutine, enabled);
+	if(!::SetConsoleCtrlHandler(HandlerRoutine, true)) {
+		qCCritical(logQCtrlSignalHandler).noquote()
+				<< "Failed to create signal handler with error:"
+				<< lastErrorMessage();
+	}
+}
+
+QCtrlSignalHandlerWin::~QCtrlSignalHandlerWin()
+{
+	if(!::SetConsoleCtrlHandler(HandlerRoutine, false)) {
+		qCCritical(logQCtrlSignalHandler).noquote()
+				<< "Failed to remove signal handler with error:"
+				<< lastErrorMessage();
+	}
 }
 
 bool QCtrlSignalHandlerWin::registerSignal(int signal)
 {
-	return testNotAutoShut(signal);
+	switch (signal) {
+	case CTRL_C_EVENT:
+	case CTRL_BREAK_EVENT:
+		return true;
+	default:
+		return false;
+	}
 }
 
-bool QCtrlSignalHandlerWin::unregisterSignal(int signal)
+bool QCtrlSignalHandlerWin::unregisterSignal(int)
 {
-	return testNotAutoShut(signal);
+	return true;
 }
 
 void QCtrlSignalHandlerWin::changeAutoShutMode(bool) {}
@@ -40,18 +55,6 @@ void QCtrlSignalHandlerWin::changeAutoShutMode(bool) {}
 QReadWriteLock *QCtrlSignalHandlerWin::lock() const
 {
 	return &rwLock;
-}
-
-bool QCtrlSignalHandlerWin::testNotAutoShut(int signal)
-{
-	if(autoShut) {
-		if(signal == CTRL_C_EVENT ||
-		   signal == CTRL_BREAK_EVENT ||
-		   signal == CTRL_CLOSE_EVENT)
-			return false;
-	}
-
-	return true;
 }
 
 bool QCtrlSignalHandlerWin::handleAutoShut(DWORD signal)
@@ -79,11 +82,26 @@ BOOL QCtrlSignalHandlerWin::HandlerRoutine(DWORD dwCtrlType)
 {
 	auto self = p_instance<QCtrlSignalHandlerWin>();
 	QReadLocker lock(self->lock());
-	if(self->autoShut && self->handleAutoShut(dwCtrlType))
+	if(self->activeSignals.contains((int)dwCtrlType) &&
+	   self->reportSignalTriggered((int)dwCtrlType))
 		return TRUE;
-	else if(self->activeSignals.contains((int)dwCtrlType) &&
-			self->reportSignalTriggered((int)dwCtrlType))
+	else if(self->autoShut && self->handleAutoShut(dwCtrlType))
 		return TRUE;
 	else
 		return FALSE;
+}
+
+QString QCtrlSignalHandlerWin::lastErrorMessage()
+{
+	LPWSTR bufPtr = NULL;
+	auto err = GetLastError();
+	FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER |
+				   FORMAT_MESSAGE_FROM_SYSTEM |
+				   FORMAT_MESSAGE_IGNORE_INSERTS,
+				   NULL, err, 0, (LPWSTR)&bufPtr, 0, NULL);
+	const QString result = bufPtr ?
+							   QString::fromUtf16((const ushort*)bufPtr).trimmed() :
+							   QString("Unknown Error %1").arg(err);
+	LocalFree(bufPtr);
+	return result;
 }

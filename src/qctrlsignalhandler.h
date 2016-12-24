@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QScopedPointer>
+#include <QLoggingCategory>
 
 #include <functional>
 
@@ -19,7 +20,6 @@ class QCtrlSignalHandler : public QObject
 	friend class QCtrlSignalHandlerPrivate;
 	friend class QCtrlSignalHandlerInstance;
 
-	Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY enabledChanged)
 	Q_PROPERTY(bool autoShutActive READ isAutoShutActive WRITE setAutoShutActive NOTIFY autoShutActiveChanged)
 
 public:
@@ -38,11 +38,9 @@ public:
 	bool registerForSignal(int signal);
 	bool unregisterFromSignal(int signal);
 
-	bool isEnabled() const;	
 	bool isAutoShutActive() const;
 
 public slots:
-	bool setEnabled(bool enabled);	
 	void setAutoShutActive(bool autoShutActive);
 
 signals:
@@ -53,7 +51,6 @@ signals:
 	//other signals
 	void ctrlSignal(int signal);
 
-	void enabledChanged(bool enabled);	
 	void autoShutActiveChanged(bool autoShutActive);
 
 private:
@@ -62,5 +59,7 @@ private:
 	explicit QCtrlSignalHandler();
 	~QCtrlSignalHandler();
 };
+
+Q_DECLARE_LOGGING_CATEGORY(logQCtrlSignalHandler)
 
 #endif // QCTRLSIGNALHANDLER_H

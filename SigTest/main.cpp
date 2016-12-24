@@ -5,7 +5,9 @@
 
 #define CUSTOM_HANDLERS 0
 #define AUTO_SHUTDOWN 1
-#define MODE AUTO_SHUTDOWN
+#define AUTO_SHUTDOWN_OVERWRITE 2
+
+#define MODE AUTO_SHUTDOWN_OVERWRITE
 
 int main(int argc, char *argv[])
 {
@@ -13,40 +15,36 @@ int main(int argc, char *argv[])
 
 	auto handler = QCtrlSignalHandler::instance();
 #if MODE == CUSTOM_HANDLERS
-	qDebug() << "SIGINT reg" << handler->registerForSignal(QCtrlSignalHandler::SigInt);
-	qDebug() << "SIGTERM reg" << handler->registerForSignal(QCtrlSignalHandler::SigTerm);
+	qDebug() << "SigInt reg" << handler->registerForSignal(QCtrlSignalHandler::SigInt);
+	qDebug() << "SigTerm reg" << handler->registerForSignal(QCtrlSignalHandler::SigTerm);
 
 	QObject::connect(handler, &QCtrlSignalHandler::sigInt, qApp, [](){
-		qDebug() << "SIGINT";
-		qDebug() << qApp->thread() << QThread::currentThread();
+		qDebug() << "SigInt  triggered";
 	});
 	QObject::connect(handler, &QCtrlSignalHandler::sigTerm, qApp, [](){
-		qDebug() << "SIGTERM";
-		qDebug() << qApp->thread() << QThread::currentThread();
+		qDebug() << "SigTerm triggered";
 	});
 
-#ifdef Q_OS_WIN
-	//cannot handle CTRL_CLOSE_EVENT asynchronously
-#else
-	qDebug() << "SIGQUIT reg" << handler->registerForSignal(SIGQUIT);
+#ifdef Q_OS_UNIX
+	qDebug() << "SIGQUIT(3) reg" << handler->registerForSignal(SIGQUIT);
 	QObject::connect(handler, &QCtrlSignalHandler::ctrlSignal, qApp, [](int signal){
-		qDebug() << "SIGNAL" << signal << "(3 -> SIGQUIT)";
+		qDebug() << "SIGNAL" << signal << "triggered";
 	});
-
-	//cannot handle SIGHUP asynchronously
 #endif
-#elif MODE == AUTO_SHUTDOWN
+#elif MODE >= AUTO_SHUTDOWN
 	QObject::connect(qApp, &QCoreApplication::aboutToQuit, qApp, [](){
 		qDebug() << "App about to quit!";
 		QThread::sleep(1);
 	}, Qt::DirectConnection);
 	handler->setAutoShutActive(true);
 
-	qDebug() << "SIGINT reg" << handler->registerForSignal(QCtrlSignalHandler::SigInt) << "(should be false)";
-	qDebug() << "SIGTERM reg" << handler->registerForSignal(QCtrlSignalHandler::SigTerm) << "(should be false)";
+#if MODE == AUTO_SHUTDOWN_OVERWRITE
+	qDebug() << "SigInt reg" << handler->registerForSignal(QCtrlSignalHandler::SigInt);
+	QObject::connect(handler, &QCtrlSignalHandler::sigInt, qApp, [](){
+		qDebug() << "SigInt  triggered, no auto shutdown anymore!";
+	});
 #endif
-
-	qDebug() << "enable" << handler->setEnabled(true);
+#endif
 
 	return a.exec();
 }
