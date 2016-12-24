@@ -1,7 +1,8 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-    SigTest
+    SigTest \
+    doc
 
 DISTFILES += \
 	README.md \

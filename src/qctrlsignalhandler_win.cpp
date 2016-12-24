@@ -19,7 +19,7 @@ QCtrlSignalHandlerWin::QCtrlSignalHandlerWin(QCtrlSignalHandler *q_ptr) :
 	rwLock(QReadWriteLock::Recursive)
 {
 	if(!::SetConsoleCtrlHandler(HandlerRoutine, true)) {
-		qCCritical(logQCtrlSignalHandler).noquote()
+		qCWarning(logQCtrlSignals).noquote()
 				<< "Failed to create signal handler with error:"
 				<< lastErrorMessage();
 	}
@@ -28,7 +28,7 @@ QCtrlSignalHandlerWin::QCtrlSignalHandlerWin(QCtrlSignalHandler *q_ptr) :
 QCtrlSignalHandlerWin::~QCtrlSignalHandlerWin()
 {
 	if(!::SetConsoleCtrlHandler(HandlerRoutine, false)) {
-		qCCritical(logQCtrlSignalHandler).noquote()
+		qCWarning(logQCtrlSignals).noquote()
 				<< "Failed to remove signal handler with error:"
 				<< lastErrorMessage();
 	}
@@ -50,16 +50,16 @@ bool QCtrlSignalHandlerWin::unregisterSignal(int)
 	return true;
 }
 
-void QCtrlSignalHandlerWin::changeAutoShutMode(bool) {}
+void QCtrlSignalHandlerWin::changeAutoQuittMode(bool) {}
 
 QReadWriteLock *QCtrlSignalHandlerWin::lock() const
 {
 	return &rwLock;
 }
 
-bool QCtrlSignalHandlerWin::handleAutoShut(DWORD signal)
+bool QCtrlSignalHandlerWin::handleAutoQuit(DWORD signal)
 {
-	if(!autoShut)
+	if(!autoQuit)
 		return false;
 
 	switch (signal) {
@@ -88,7 +88,7 @@ BOOL QCtrlSignalHandlerWin::HandlerRoutine(DWORD dwCtrlType)
 	if(self->reportSignalTriggered((int)dwCtrlType))
 		return TRUE;
 	else
-		return self->handleAutoShut(dwCtrlType);
+		return self->handleAutoQuit(dwCtrlType);
 }
 
 QString QCtrlSignalHandlerWin::lastErrorMessage()

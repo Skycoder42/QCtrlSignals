@@ -22,12 +22,12 @@ QCtrlSignalHandlerUnix::QCtrlSignalHandlerUnix(QCtrlSignalHandler *q_ptr) :
 						 this, &QCtrlSignalHandlerUnix::socketNotifyTriggerd);
 		socketNotifier->setEnabled(true);
 	} else
-		qCWarning(logQCtrlSignalHandler) << "Failed to create socket pair with error:" << ::strerror(errno);
+		qCWarning(logQCtrlSignals) << "Failed to create socket pair with error:" << ::strerror(errno);
 }
 
 bool QCtrlSignalHandlerUnix::registerSignal(int signal)
 {
-	if(isAutoShutRegistered(signal))
+	if(isAutoQuitRegistered(signal))
 		return true;
 	else
 		return updateSignalHandler(signal, true);
@@ -35,13 +35,13 @@ bool QCtrlSignalHandlerUnix::registerSignal(int signal)
 
 bool QCtrlSignalHandlerUnix::unregisterSignal(int signal)
 {
-	if(isAutoShutRegistered(signal))
+	if(isAutoQuitRegistered(signal))
 		return true;
 	else
 		return updateSignalHandler(signal, false);
 }
 
-void QCtrlSignalHandlerUnix::changeAutoShutMode(bool enabled)
+void QCtrlSignalHandlerUnix::changeAutoQuittMode(bool enabled)
 {
 	foreach(auto sig, shutSignals) {
 		if(!activeSignals.contains(sig))
@@ -59,15 +59,15 @@ void QCtrlSignalHandlerUnix::socketNotifyTriggerd(int socket)
 	int signal;
 	if(::read(socket, &signal, sizeof(int)) == sizeof(int)) {
 		if(!reportSignalTriggered(signal) &&
-		   isAutoShutRegistered(signal))
+		   isAutoQuitRegistered(signal))
 			qApp->quit();
 	} else
-		qCWarning(logQCtrlSignalHandler) << "Failed to read signal from socket pair";
+		qCWarning(logQCtrlSignals) << "Failed to read signal from socket pair";
 }
 
-bool QCtrlSignalHandlerUnix::isAutoShutRegistered(int signal) const
+bool QCtrlSignalHandlerUnix::isAutoQuitRegistered(int signal) const
 {
-	if(autoShut)
+	if(autoQuit)
 		return shutSignals.contains(signal);
 	else
 		return false;
@@ -82,10 +82,10 @@ bool QCtrlSignalHandlerUnix::updateSignalHandler(int signal, bool active)
 	if(::sigaction(signal, &action, NULL) == 0)
 		return true;
 	else {
-		qCWarning(logQCtrlSignalHandler) << "Failed to"
-										 << (active ? "register" : "unregister")
-										 << "signal with error:"
-										 << ::strerror(errno);
+		qCWarning(logQCtrlSignals) << "Failed to"
+								   << (active ? "register" : "unregister")
+								   << "signal with error:"
+								   << ::strerror(errno);
 		return false;
 	}
 }

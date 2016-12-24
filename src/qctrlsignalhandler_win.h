@@ -13,14 +13,14 @@ public:
 
 	bool registerSignal(int signal) override;
 	bool unregisterSignal(int signal) override;
-	void changeAutoShutMode(bool) override;
+	void changeAutoQuittMode(bool) override;
 
 	QReadWriteLock *lock() const override;
 
 private:
 	mutable QReadWriteLock rwLock;
 
-	bool handleAutoShut(DWORD signal);
+	bool handleAutoQuit(DWORD signal);
 
 	static BOOL WINAPI HandlerRoutine(_In_ DWORD dwCtrlType);
 	static QString lastErrorMessage();

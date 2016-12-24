@@ -15,7 +15,7 @@ public:
 
 	bool registerSignal(int signal) override;
 	bool unregisterSignal(int signal) override;
-	void changeAutoShutMode(bool enabled) override;
+	void changeAutoQuittMode(bool enabled) override;
 	QReadWriteLock *lock() const override;
 
 private slots:
@@ -24,7 +24,7 @@ private slots:
 private:
 	QSocketNotifier *socketNotifier;
 
-	bool isAutoShutRegistered(int signal) const;
+	bool isAutoQuitRegistered(int signal) const;
 	bool updateSignalHandler(int signal, bool active);
 
 	static int sockpair[2];

@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 		qDebug() << "App about to quit!";
 		QThread::sleep(1);
 	}, Qt::DirectConnection);
-	handler->setAutoShutActive(true);
+	handler->setAutoQuitActive(true);
 
 #if MODE == AUTO_SHUTDOWN_OVERWRITE
 	qDebug() << "SigInt" << handler->registerForSignal(QCtrlSignalHandler::SigInt);

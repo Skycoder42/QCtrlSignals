@@ -3,7 +3,7 @@
 #include <QGlobalStatic>
 #include <qdebug.h>
 
-Q_LOGGING_CATEGORY(logQCtrlSignalHandler, "QCtrlSignalHandler")
+Q_LOGGING_CATEGORY(logQCtrlSignals, "QCtrlSignals")
 
 class QCtrlSignalHandlerInstance : public QCtrlSignalHandler {
 public:
@@ -52,28 +52,28 @@ bool QCtrlSignalHandler::unregisterFromSignal(int signal)
 		return true;
 }
 
-bool QCtrlSignalHandler::isAutoShutActive() const
+bool QCtrlSignalHandler::isAutoQuitActive() const
 {
 	QReadLocker lock(d_ptr->lock());
-	return d_ptr->autoShut;
+	return d_ptr->autoQuit;
 }
 
-void QCtrlSignalHandler::setAutoShutActive(bool autoShutActive)
+void QCtrlSignalHandler::setAutoQuitActive(bool autoQuitActive)
 {
 	QWriteLocker lock(d_ptr->lock());
-	if (d_ptr->autoShut == autoShutActive)
+	if (d_ptr->autoQuit == autoQuitActive)
 		return;
 
-	d_ptr->autoShut = autoShutActive;
-	d_ptr->changeAutoShutMode(autoShutActive);
-	emit autoShutActiveChanged(autoShutActive);
+	d_ptr->autoQuit = autoQuitActive;
+	d_ptr->changeAutoQuittMode(autoQuitActive);
+	emit autoQuitActiveChanged(autoQuitActive);
 }
 
 
 
 QCtrlSignalHandlerPrivate::QCtrlSignalHandlerPrivate(QCtrlSignalHandler *q_ptr) :
 	activeSignals(),
-	autoShut(false),
+	autoQuit(false),
 	q_ptr(q_ptr)
 {}
 
@@ -86,11 +86,10 @@ bool QCtrlSignalHandlerPrivate::reportSignalTriggered(int signal)
 		return false;
 
 	if(signal == QCtrlSignalHandler::SigInt)
-		return QMetaObject::invokeMethod(q_ptr, "sigInt", Qt::QueuedConnection);
+		QMetaObject::invokeMethod(q_ptr, "sigInt", Qt::QueuedConnection);
 	else if(signal == QCtrlSignalHandler::SigTerm)
-		return QMetaObject::invokeMethod(q_ptr, "sigTerm", Qt::QueuedConnection);
-	else {
-		return QMetaObject::invokeMethod(q_ptr, "ctrlSignal", Qt::QueuedConnection,
-										 Q_ARG(int, signal));
-	}
+		QMetaObject::invokeMethod(q_ptr, "sigTerm", Qt::QueuedConnection);
+
+	return QMetaObject::invokeMethod(q_ptr, "ctrlSignal", Qt::QueuedConnection,
+									 Q_ARG(int, signal));
 }

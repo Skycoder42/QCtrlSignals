@@ -14,44 +14,54 @@
 #endif
 
 class QCtrlSignalHandlerPrivate;
+//! A class to listen for "CTRL-Signals"
 class QCtrlSignalHandler : public QObject
 {
 	Q_OBJECT
 	friend class QCtrlSignalHandlerPrivate;
 	friend class QCtrlSignalHandlerInstance;
 
-	Q_PROPERTY(bool autoShutActive READ isAutoShutActive WRITE setAutoShutActive NOTIFY autoShutActiveChanged)
+	//! Specifies, whether the handler should automatically handle signals that "quit" the app
+	Q_PROPERTY(bool autoQuitActive READ isAutoQuitActive WRITE setAutoQuitActive NOTIFY autoQuitActiveChanged)
 
 public:
+	//! Common signals, that are available on all platforms
 	enum CommonSignals {
 #ifdef Q_OS_WIN
 		SigInt = CTRL_C_EVENT,
 		SigTerm = CTRL_BREAK_EVENT
 #else
-		SigInt = SIGINT,
-		SigTerm = SIGTERM
+		SigInt = SIGINT,//!< Mapped to `CTRL_C_EVENT` on windows and `SIGINT` on unix
+		SigTerm = SIGTERM//!< Mapped to `CTRL_BREAK_EVENT` on windows and `SIGTERM` on unix
 #endif
 	};
 
+	//! Returns the singleton instance of the signal handler
 	static QCtrlSignalHandler *instance();
 
+	//! Registers this handler for the given signal
 	bool registerForSignal(int signal);
+	//! Registers this handler from the given signal
 	bool unregisterFromSignal(int signal);
 
-	bool isAutoShutActive() const;
+	//! READ-Accessor for QCtrlSignalHandler::autoQuitActive
+	bool isAutoQuitActive() const;
 
 public slots:
-	void setAutoShutActive(bool autoShutActive);
+	//! WRITE-Accessor for QCtrlSignalHandler::autoQuitActive
+	void setAutoQuitActive(bool autoQuitActive);
 
 signals:
-	//common, asynchrounus signals
+	//! Shortcut signal for CommonSignals::SigInt
 	void sigInt();
+	//! Shortcut signal for CommonSignals::SigTerm
 	void sigTerm();
 
-	//other signals
+	//! Will be emitted if a registered signal occures
 	void ctrlSignal(int signal);
 
-	void autoShutActiveChanged(bool autoShutActive);
+	//! NOTIFY-Accessor for QCtrlSignalHandler::autoQuitActive
+	void autoQuitActiveChanged(bool autoQuitActive);
 
 private:
 	QScopedPointer<QCtrlSignalHandlerPrivate> d_ptr;
@@ -60,6 +70,6 @@ private:
 	~QCtrlSignalHandler();
 };
 
-Q_DECLARE_LOGGING_CATEGORY(logQCtrlSignalHandler)
+Q_DECLARE_LOGGING_CATEGORY(logQCtrlSignals)
 
 #endif // QCTRLSIGNALHANDLER_H

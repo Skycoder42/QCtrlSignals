@@ -16,10 +16,10 @@ public:
 	virtual bool registerSignal(int signal) = 0;
 	virtual bool unregisterSignal(int signal) = 0;
 
-	virtual void changeAutoShutMode(bool enabled) = 0;
+	virtual void changeAutoQuittMode(bool enabled) = 0;
 
 	QSet<int> activeSignals;
-	bool autoShut;
+	bool autoQuit;
 
 	virtual QReadWriteLock *lock() const = 0;
 
