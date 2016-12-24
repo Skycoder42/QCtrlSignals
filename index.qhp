@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QtHelpProject version="1.0">
+  <namespace>com.Skycoder42.QCtrlSignals.100</namespace>
+  <virtualFolder>doc_QCtrlSignals</virtualFolder>
+  <filterSection>
+    <filterAttribute>doxygen</filterAttribute>
+    <toc>
+      <section title="QCtrlSignals 1.0.0" ref="index.html">
+        <section title="Classes" ref="annotated.html">
+          <section title="Class List" ref="annotated.html">
+            <section title="QCtrlSignalHandler" ref="class_q_ctrl_signal_handler.html">
+              <section title="CommonSignals" ref="class_q_ctrl_signal_handler.html#a93346acaf8ffa6324e87378c197f45f1">
+                <section title="SigInt" ref="class_q_ctrl_signal_handler.html#a93346acaf8ffa6324e87378c197f45f1a933473e9b786d1841151ab7050a83e08" />
+                <section title="SigTerm" ref="class_q_ctrl_signal_handler.html#a93346acaf8ffa6324e87378c197f45f1aaf33130cb634ced06d9b2ba276b5734b" />
+              </section>
+              <section title="autoQuitActiveChanged" ref="class_q_ctrl_signal_handler.html#ac314efafbc34619f56bb2da4673dbaff" />
+              <section title="ctrlSignal" ref="class_q_ctrl_signal_handler.html#a900be346253ba0d56c1d97e025c105ed" />
+              <section title="isAutoQuitActive" ref="class_q_ctrl_signal_handler.html#a4f6615755a2d8547b6433c2e404e59c5" />
+              <section title="registerForSignal" ref="class_q_ctrl_signal_handler.html#a74d6b194cdc52fd1175d44fc51fe8a27" />
+              <section title="setAutoQuitActive" ref="class_q_ctrl_signal_handler.html#ae57379a248038a8accadbb9f6b05167d" />
+              <section title="sigInt" ref="class_q_ctrl_signal_handler.html#a409b0625733bc979bf28df5ec726b343" />
+              <section title="sigTerm" ref="class_q_ctrl_signal_handler.html#a67ec270f2f1691be885811d0a37ee7eb" />
+              <section title="unregisterFromSignal" ref="class_q_ctrl_signal_handler.html#a01a287f2714b97bdf3d242d1df16ee04" />
+              <section title="QCtrlSignalHandlerInstance" ref="class_q_ctrl_signal_handler.html#a969a99c1ecb156f26b93eacac69d31f4" />
+              <section title="QCtrlSignalHandlerPrivate" ref="class_q_ctrl_signal_handler.html#a85476ece509de5a4045b69075f5fa91c" />
+              <section title="autoQuitActive" ref="class_q_ctrl_signal_handler.html#a53daa36b41b88f2696a87fa2593cd665" />
+            </section>
+          </section>
+          <section title="Class Index" ref="classes.html" />
+          <section title="Class Hierarchy" ref="hierarchy.html">
+            <section title="QObject" ref="qobject.html">
+              <section title="QCtrlSignalHandler" ref="class_q_ctrl_signal_handler.html" />
+            </section>
+          </section>
+          <section title="Class Members" ref="functions.html">
+            <section title="All" ref="functions.html" />
+            <section title="Functions" ref="functions_func.html" />
+            <section title="Enumerations" ref="functions_enum.html" />
+            <section title="Enumerator" ref="functions_eval.html" />
+            <section title="Properties" ref="functions_prop.html" />
+          </section>
+        </section>
+        <section title="Files">
+          <section title="File List" ref="files.html">
+            <section title="qctrlsignalhandler.h" ref="qctrlsignalhandler_8h_source.html" />
+          </section>
+        </section>
+      </section>
+    </toc>
+    <keywords>
+      <keyword name="QCtrlSignalHandler" id="QCtrlSignalHandler" ref="class_q_ctrl_signal_handler.html" />
+      <keyword name="setAutoQuitActive" id="QCtrlSignalHandler::setAutoQuitActive" ref="class_q_ctrl_signal_handler.html#ae57379a248038a8accadbb9f6b05167d" />
+      <keyword name="sigInt" id="QCtrlSignalHandler::sigInt" ref="class_q_ctrl_signal_handler.html#a409b0625733bc979bf28df5ec726b343" />
+      <keyword name="sigTerm" id="QCtrlSignalHandler::sigTerm" ref="class_q_ctrl_signal_handler.html#a67ec270f2f1691be885811d0a37ee7eb" />
+      <keyword name="ctrlSignal" id="QCtrlSignalHandler::ctrlSignal" ref="class_q_ctrl_signal_handler.html#a900be346253ba0d56c1d97e025c105ed" />
+      <keyword name="autoQuitActiveChanged" id="QCtrlSignalHandler::autoQuitActiveChanged" ref="class_q_ctrl_signal_handler.html#ac314efafbc34619f56bb2da4673dbaff" />
+      <keyword name="registerForSignal" id="QCtrlSignalHandler::registerForSignal" ref="class_q_ctrl_signal_handler.html#a74d6b194cdc52fd1175d44fc51fe8a27" />
+      <keyword name="unregisterFromSignal" id="QCtrlSignalHandler::unregisterFromSignal" ref="class_q_ctrl_signal_handler.html#a01a287f2714b97bdf3d242d1df16ee04" />
+      <keyword name="isAutoQuitActive" id="QCtrlSignalHandler::isAutoQuitActive" ref="class_q_ctrl_signal_handler.html#a4f6615755a2d8547b6433c2e404e59c5" />
+      <keyword name="QObject" id="QObject::QObject" ref="qobject.html#QObject" />
+      <keyword name="event" id="QObject::event" ref="qobject.html#event" />
+      <keyword name="eventFilter" id="QObject::eventFilter" ref="qobject.html#eventFilter" />
+      <keyword name="metaObject" id="QObject::metaObject" ref="qobject.html#metaObject" />
+      <keyword name="objectName" id="QObject::objectName" ref="qobject.html#objectName-prop" />
+      <keyword name="setObjectName" id="QObject::setObjectName" ref="qobject.html#objectName-prop" />
+      <keyword name="isWidgetType" id="QObject::isWidgetType" ref="qobject.html#isWidgetType" />
+      <keyword name="isWindowType" id="QObject::isWindowType" ref="qobject.html#isWindowType" />
+      <keyword name="signalsBlocked" id="QObject::signalsBlocked" ref="qobject.html#signalsBlocked" />
+      <keyword name="blockSignals" id="QObject::blockSignals" ref="qobject.html#blockSignals" />
+      <keyword name="thread" id="QObject::thread" ref="qobject.html#thread" />
+      <keyword name="moveToThread" id="QObject::moveToThread" ref="qobject.html#moveToThread" />
+      <keyword name="startTimer" id="QObject::startTimer" ref="qobject.html#startTimer" />
+      <keyword name="killTimer" id="QObject::killTimer" ref="qobject.html#killTimer" />
+      <keyword name="findChild" id="QObject::findChild" ref="qobject.html#findChild" />
+      <keyword name="findChildren" id="QObject::findChildren" ref="qobject.html#findChildren" />
+      <keyword name="findChildren" id="QObject::findChildren" ref="qobject.html#findChildren-1" />
+      <keyword name="findChildren" id="QObject::findChildren" ref="qobject.html#findChildren-2" />
+      <keyword name="children" id="QObject::children" ref="qobject.html#children" />
+      <keyword name="setParent" id="QObject::setParent" ref="qobject.html#setParent" />
+      <keyword name="installEventFilter" id="QObject::installEventFilter" ref="qobject.html#installEventFilter" />
+      <keyword name="removeEventFilter" id="QObject::removeEventFilter" ref="qobject.html#removeEventFilter" />
+      <keyword name="connect" id="QObject::connect" ref="qobject.html#connect-2" />
+      <keyword name="disconnect" id="QObject::disconnect" ref="qobject.html#disconnect-2" />
+      <keyword name="disconnect" id="QObject::disconnect" ref="qobject.html#disconnect-3" />
+      <keyword name="dumpObjectTree" id="QObject::dumpObjectTree" ref="qobject.html#dumpObjectTree" />
+      <keyword name="dumpObjectInfo" id="QObject::dumpObjectInfo" ref="qobject.html#dumpObjectInfo" />
+      <keyword name="setProperty" id="QObject::setProperty" ref="qobject.html#setProperty" />
+      <keyword name="property" id="QObject::property" ref="qobject.html#property" />
+      <keyword name="dynamicPropertyNames" id="QObject::dynamicPropertyNames" ref="qobject.html#dynamicPropertyNames" />
+      <keyword name="destroyed" id="QObject::destroyed" ref="qobject.html#destroyed" />
+      <keyword name="objectNameChanged" id="QObject::objectNameChanged" ref="qobject.html#objectNameChanged" />
+      <keyword name="parent" id="QObject::parent" ref="qobject.html#parent" />
+      <keyword name="inherits" id="QObject::inherits" ref="qobject.html#inherits" />
+      <keyword name="deleteLater" id="QObject::deleteLater" ref="qobject.html#deleteLater" />
+      <keyword name="instance" id="QCtrlSignalHandler::instance" ref="class_q_ctrl_signal_handler.html#a87578cfb27e0943108619409b26e8910" />
+      <keyword name="tr" id="QObject::tr" ref="qobject.html#tr" />
+      <keyword name="trUtf8" id="QObject::trUtf8" ref="qobject.html#trUtf8" />
+      <keyword name="connect" id="QObject::connect" ref="qobject.html#connect" />
+      <keyword name="connect" id="QObject::connect" ref="qobject.html#connect-1" />
+      <keyword name="connect" id="QObject::connect" ref="qobject.html#connect-3" />
+      <keyword name="connect" id="QObject::connect" ref="qobject.html#connect-4" />
+      <keyword name="connect" id="QObject::connect" ref="qobject.html#connect-5" />
+      <keyword name="disconnect" id="QObject::disconnect" ref="qobject.html#disconnect" />
+      <keyword name="disconnect" id="QObject::disconnect" ref="qobject.html#disconnect-1" />
+      <keyword name="disconnect" id="QObject::disconnect" ref="qobject.html#disconnect-4" />
+      <keyword name="disconnect" id="QObject::disconnect" ref="qobject.html#disconnect-5" />
+      <keyword name="autoQuitActive" id="QCtrlSignalHandler::autoQuitActive" ref="class_q_ctrl_signal_handler.html#a53daa36b41b88f2696a87fa2593cd665" />
+      <keyword name="objectName" id="QObject::objectName" ref="qobject.html#objectName-prop" />
+      <keyword name="QCtrlSignalHandlerPrivate" id="QCtrlSignalHandler::QCtrlSignalHandlerPrivate" ref="class_q_ctrl_signal_handler.html#a85476ece509de5a4045b69075f5fa91c" />
+      <keyword name="QCtrlSignalHandlerInstance" id="QCtrlSignalHandler::QCtrlSignalHandlerInstance" ref="class_q_ctrl_signal_handler.html#a969a99c1ecb156f26b93eacac69d31f4" />
+      <keyword name="sender" id="QObject::sender" ref="qobject.html#sender" />
+      <keyword name="senderSignalIndex" id="QObject::senderSignalIndex" ref="qobject.html#senderSignalIndex" />
+      <keyword name="receivers" id="QObject::receivers" ref="qobject.html#receivers" />
+      <keyword name="isSignalConnected" id="QObject::isSignalConnected" ref="qobject.html#isSignalConnected" />
+      <keyword name="timerEvent" id="QObject::timerEvent" ref="qobject.html#timerEvent" />
+      <keyword name="childEvent" id="QObject::childEvent" ref="qobject.html#childEvent" />
+      <keyword name="customEvent" id="QObject::customEvent" ref="qobject.html#customEvent" />
+      <keyword name="connectNotify" id="QObject::connectNotify" ref="qobject.html#connectNotify" />
+      <keyword name="disconnectNotify" id="QObject::disconnectNotify" ref="qobject.html#disconnectNotify" />
+      <keyword name="SigInt" id="QCtrlSignalHandler::SigInt" ref="class_q_ctrl_signal_handler.html#a93346acaf8ffa6324e87378c197f45f1a933473e9b786d1841151ab7050a83e08" />
+      <keyword name="SigTerm" id="QCtrlSignalHandler::SigTerm" ref="class_q_ctrl_signal_handler.html#a93346acaf8ffa6324e87378c197f45f1aaf33130cb634ced06d9b2ba276b5734b" />
+    </keywords>
+    <files>
+      <file>tabs.css</file>
+      <file>tab_a.png</file>
+      <file>tab_b.png</file>
+      <file>tab_h.png</file>
+      <file>tab_s.png</file>
+      <file>nav_h.png</file>
+      <file>nav_f.png</file>
+      <file>bc_s.png</file>
+      <file>doxygen.png</file>
+      <file>closed.png</file>
+      <file>open.png</file>
+      <file>bdwn.png</file>
+      <file>sync_on.png</file>
+      <file>sync_off.png</file>
+      <file>doxygen.css</file>
+      <file>search/search_l.png</file>
+      <file>search/search_m.png</file>
+      <file>search/search_r.png</file>
+      <file>search/close.png</file>
+      <file>search/mag_sel.png</file>
+      <file>search/search.css</file>
+      <file>search/search.js</file>
+      <file>qctrlsignalhandler_8h_source.html</file>
+      <file>_r_e_a_d_m_e_8md_source.html</file>
+      <file>class_q_ctrl_signal_handler.html</file>
+      <file>class_q_ctrl_signal_handler.png</file>
+      <file>class_q_ctrl_signal_handler-members.html</file>
+      <file>dir_68267d1309a1af8e8297ef4c3efbcdba.html</file>
+      <file>index.html</file>
+      <file>annotated.html</file>
+      <file>classes.html</file>
+      <file>hierarchy.html</file>
+      <file>functions.html</file>
+      <file>functions.html</file>
+      <file>functions.html</file>
+      <file>functions.html</file>
+      <file>functions.html</file>
+      <file>functions.html</file>
+      <file>functions_func.html</file>
+      <file>functions_func.html</file>
+      <file>functions_func.html</file>
+      <file>functions_func.html</file>
+      <file>functions_func.html</file>
+      <file>functions_func.html</file>
+      <file>functions_enum.html</file>
+      <file>functions_eval.html</file>
+      <file>functions_prop.html</file>
+      <file>files.html</file>
+    </files>
+  </filterSection>
+</QtHelpProject>
