@@ -15,18 +15,20 @@ int main(int argc, char *argv[])
 
 	auto handler = QCtrlSignalHandler::instance();
 #if MODE == CUSTOM_HANDLERS
-	qDebug() << "SigInt reg" << handler->registerForSignal(QCtrlSignalHandler::SigInt);
-	qDebug() << "SigTerm reg" << handler->registerForSignal(QCtrlSignalHandler::SigTerm);
+	qDebug() << "SigInt" << handler->registerForSignal(QCtrlSignalHandler::SigInt);
+	qDebug() << "SigTerm" << handler->registerForSignal(QCtrlSignalHandler::SigTerm);
 
 	QObject::connect(handler, &QCtrlSignalHandler::sigInt, qApp, [](){
-		qDebug() << "SigInt  triggered";
+		qDebug() << "SigInt triggered";
 	});
 	QObject::connect(handler, &QCtrlSignalHandler::sigTerm, qApp, [](){
 		qDebug() << "SigTerm triggered";
 	});
 
-#ifdef Q_OS_UNIX
-	qDebug() << "SIGQUIT(3) reg" << handler->registerForSignal(SIGQUIT);
+#ifdef Q_OS_WIN
+	qDebug() << "CTRL_CLOSE_EVENT can't be registered, this creates a false: CTRL_CLOSE_EVENT" << handler->registerForSignal(CTRL_CLOSE_EVENT);
+#else
+	qDebug() << "SIGQUIT(3)" << handler->registerForSignal(SIGQUIT);
 	QObject::connect(handler, &QCtrlSignalHandler::ctrlSignal, qApp, [](int signal){
 		qDebug() << "SIGNAL" << signal << "triggered";
 	});
@@ -41,9 +43,9 @@ int main(int argc, char *argv[])
 	handler->setAutoShutActive(true);
 
 #if MODE == AUTO_SHUTDOWN_OVERWRITE
-	qDebug() << "SigInt reg" << handler->registerForSignal(QCtrlSignalHandler::SigInt);
+	qDebug() << "SigInt" << handler->registerForSignal(QCtrlSignalHandler::SigInt);
 	QObject::connect(handler, &QCtrlSignalHandler::sigInt, qApp, [](){
-		qDebug() << "SigInt  triggered, no auto shutdown anymore!";
+		qDebug() << "SigInt triggered, no auto shutdown anymore!";
 	});
 #endif
 #endif

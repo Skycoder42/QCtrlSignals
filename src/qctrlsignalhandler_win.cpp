@@ -40,7 +40,7 @@ bool QCtrlSignalHandlerWin::registerSignal(int signal)
 	case CTRL_C_EVENT:
 	case CTRL_BREAK_EVENT:
 		return true;
-	default:
+	default://TODO logoff and shutdown events --> are they possible?
 		return false;
 	}
 }
