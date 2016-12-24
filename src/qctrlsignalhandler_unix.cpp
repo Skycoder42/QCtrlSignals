@@ -3,8 +3,6 @@
 #include <unistd.h>
 #include <sys/socket.h>
 
-//TODO error handling
-
 int QCtrlSignalHandlerUnix::sockpair[2];
 QVector<int> QCtrlSignalHandlerUnix::shutSignals = {SIGINT, SIGTERM, SIGQUIT, SIGHUP};
 
@@ -24,7 +22,7 @@ QCtrlSignalHandlerUnix::QCtrlSignalHandlerUnix(QCtrlSignalHandler *q_ptr) :
 						 this, &QCtrlSignalHandlerUnix::socketNotifyTriggerd);
 		socketNotifier->setEnabled(true);
 	} else
-		qWarning("Failed to create socket pair");
+		qCWarning(logQCtrlSignalHandler) << "Failed to create socket pair with error:" << ::strerror(errno);
 }
 
 bool QCtrlSignalHandlerUnix::registerSignal(int signal)
@@ -59,11 +57,12 @@ QReadWriteLock *QCtrlSignalHandlerUnix::lock() const
 void QCtrlSignalHandlerUnix::socketNotifyTriggerd(int socket)
 {
 	int signal;
-	::read(socket, &signal, sizeof(signal));
-
-	if(!reportSignalTriggered(signal) &&
-	   isAutoShutRegistered(signal))
-		qApp->quit();
+	if(::read(socket, &signal, sizeof(int)) == sizeof(int)) {
+		if(!reportSignalTriggered(signal) &&
+		   isAutoShutRegistered(signal))
+			qApp->quit();
+	} else
+		qCWarning(logQCtrlSignalHandler) << "Failed to read signal from socket pair";
 }
 
 bool QCtrlSignalHandlerUnix::isAutoShutRegistered(int signal) const
@@ -80,13 +79,19 @@ bool QCtrlSignalHandlerUnix::updateSignalHandler(int signal, bool active)
 	action.sa_handler = active ? QCtrlSignalHandlerUnix::unixSignalHandler : SIG_DFL;
 	::sigemptyset(&action.sa_mask);
 	action.sa_flags |= SA_RESTART;
-	if(::sigaction(signal, &action, NULL))
-		return false;
-	else
+	if(::sigaction(signal, &action, NULL) == 0)
 		return true;
+	else {
+		qCWarning(logQCtrlSignalHandler) << "Failed to"
+										 << (active ? "register" : "unregister")
+										 << "signal with error:"
+										 << ::strerror(errno);
+		return false;
+	}
 }
 
 void QCtrlSignalHandlerUnix::unixSignalHandler(int signal)
 {
-	::write(sockpair[0], &signal, sizeof(int));
+	auto wr = ::write(sockpair[0], &signal, sizeof(int));
+	Q_UNUSED(wr);
 }

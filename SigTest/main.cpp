@@ -30,6 +30,8 @@ int main(int argc, char *argv[])
 	QObject::connect(handler, &QCtrlSignalHandler::ctrlSignal, qApp, [](int signal){
 		qDebug() << "SIGNAL" << signal << "triggered";
 	});
+
+	qDebug() << "SIGKILL can't be registered, this creates a false: SIGKILL" << handler->registerForSignal(SIGKILL);
 #endif
 #elif MODE >= AUTO_SHUTDOWN
 	QObject::connect(qApp, &QCoreApplication::aboutToQuit, qApp, [](){

@@ -65,6 +65,7 @@ void QCtrlSignalHandler::setAutoShutActive(bool autoShutActive)
 		return;
 
 	d_ptr->autoShut = autoShutActive;
+	d_ptr->changeAutoShutMode(autoShutActive);
 	emit autoShutActiveChanged(autoShutActive);
 }
 
