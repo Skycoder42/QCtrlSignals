@@ -6,6 +6,7 @@
 //TODO error handling
 
 int QCtrlSignalHandlerUnix::sockpair[2];
+QVector<int> QCtrlSignalHandlerUnix::shutSignals = {SIGINT, SIGTERM, SIGQUIT, SIGHUP};
 
 QCtrlSignalHandlerPrivate *QCtrlSignalHandlerPrivate::createInstance(QCtrlSignalHandler *q_ptr)
 {
@@ -26,38 +27,28 @@ QCtrlSignalHandlerUnix::QCtrlSignalHandlerUnix(QCtrlSignalHandler *q_ptr) :
 		qWarning("Failed to create socket pair");
 }
 
-bool QCtrlSignalHandlerUnix::setSignalHandlerEnabled(bool enabled)
-{
-	auto ok = true;
-	foreach(auto signal, activeSignals) {
-		if(!updateSignalHandler(signal, enabled, true))//allow overwrite, to avoid errors, autoshut "corrects" it after
-			ok = false;
-	}
-	if(autoShut)
-		updateAutoShut(enabled);
-	return ok;
-}
-
 bool QCtrlSignalHandlerUnix::registerSignal(int signal)
 {
-	if(enabled)
-		return updateSignalHandler(signal, true);
+	if(isAutoShutRegistered(signal))
+		return true;
 	else
-		return testNotAutoShut(signal);
+		return updateSignalHandler(signal, true);
 }
 
 bool QCtrlSignalHandlerUnix::unregisterSignal(int signal)
 {
-	if(enabled)
-		return updateSignalHandler(signal, false);
+	if(isAutoShutRegistered(signal))
+		return true;
 	else
-		return testNotAutoShut(signal);
+		return updateSignalHandler(signal, false);
 }
 
 void QCtrlSignalHandlerUnix::changeAutoShutMode(bool enabled)
 {
-	if(this->enabled)
-		updateAutoShut(enabled);
+	foreach(auto sig, shutSignals) {
+		if(!activeSignals.contains(sig))
+			updateSignalHandler(sig, enabled);
+	}
 }
 
 QReadWriteLock *QCtrlSignalHandlerUnix::lock() const
@@ -70,29 +61,21 @@ void QCtrlSignalHandlerUnix::socketNotifyTriggerd(int socket)
 	int signal;
 	::read(socket, &signal, sizeof(signal));
 
-	if(autoShut)
+	if(!reportSignalTriggered(signal) &&
+	   isAutoShutRegistered(signal))
 		qApp->quit();
+}
+
+bool QCtrlSignalHandlerUnix::isAutoShutRegistered(int signal) const
+{
+	if(autoShut)
+		return shutSignals.contains(signal);
 	else
-		reportSignalTriggered(signal);
-}
-
-bool QCtrlSignalHandlerUnix::testNotAutoShut(int signal)
-{
-	if(autoShut) {
-		if(signal == SIGINT ||
-		   signal == SIGTERM ||
-		   signal == SIGQUIT)
-			return false;
-	}
-
-	return true;
-}
-
-bool QCtrlSignalHandlerUnix::updateSignalHandler(int signal, bool active, bool overwriteAutoShut)
-{
-	if(!overwriteAutoShut && !testNotAutoShut(signal))
 		return false;
+}
 
+bool QCtrlSignalHandlerUnix::updateSignalHandler(int signal, bool active)
+{
 	struct sigaction action;
 	action.sa_handler = active ? QCtrlSignalHandlerUnix::unixSignalHandler : SIG_DFL;
 	::sigemptyset(&action.sa_mask);
@@ -101,14 +84,6 @@ bool QCtrlSignalHandlerUnix::updateSignalHandler(int signal, bool active, bool o
 		return false;
 	else
 		return true;
-}
-
-void QCtrlSignalHandlerUnix::updateAutoShut(bool enabled)
-{
-	updateSignalHandler(SIGINT, enabled, true);
-	updateSignalHandler(SIGTERM, enabled, true);
-	updateSignalHandler(SIGQUIT, enabled, true);
-	//TODO handle SIGHUB
 }
 
 void QCtrlSignalHandlerUnix::unixSignalHandler(int signal)

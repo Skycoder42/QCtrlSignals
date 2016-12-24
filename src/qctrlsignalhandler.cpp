@@ -81,6 +81,9 @@ QCtrlSignalHandlerPrivate::~QCtrlSignalHandlerPrivate() {}
 bool QCtrlSignalHandlerPrivate::reportSignalTriggered(int signal)
 {
 	//Not locked, because this method is called by the signal handler, which should do the lock, if required
+	if(!activeSignals.contains(signal))
+		return false;
+
 	if(signal == QCtrlSignalHandler::SigInt)
 		return QMetaObject::invokeMethod(q_ptr, "sigInt", Qt::QueuedConnection);
 	else if(signal == QCtrlSignalHandler::SigTerm)

@@ -13,7 +13,6 @@ class QCtrlSignalHandlerUnix : public QObject, public QCtrlSignalHandlerPrivate
 public:
 	QCtrlSignalHandlerUnix(QCtrlSignalHandler *q_ptr);
 
-	bool setSignalHandlerEnabled(bool enabled) override;
 	bool registerSignal(int signal) override;
 	bool unregisterSignal(int signal) override;
 	void changeAutoShutMode(bool enabled) override;
@@ -25,11 +24,12 @@ private slots:
 private:
 	QSocketNotifier *socketNotifier;
 
-	bool testNotAutoShut(int signal);
-	bool updateSignalHandler(int signal, bool active, bool overwriteAutoShut = false);
-	void updateAutoShut(bool enabled);
+	bool isAutoShutRegistered(int signal) const;
+	bool updateSignalHandler(int signal, bool active);
 
 	static int sockpair[2];
+	static QVector<int> shutSignals;
+
 	static void unixSignalHandler(int signal);
 };
 

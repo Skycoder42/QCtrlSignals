@@ -59,6 +59,9 @@ QReadWriteLock *QCtrlSignalHandlerWin::lock() const
 
 bool QCtrlSignalHandlerWin::handleAutoShut(DWORD signal)
 {
+	if(!autoShut)
+		return false;
+
 	switch (signal) {
 	case CTRL_C_EVENT:
 	case CTRL_BREAK_EVENT:
@@ -82,13 +85,10 @@ BOOL QCtrlSignalHandlerWin::HandlerRoutine(DWORD dwCtrlType)
 {
 	auto self = p_instance<QCtrlSignalHandlerWin>();
 	QReadLocker lock(self->lock());
-	if(self->activeSignals.contains((int)dwCtrlType) &&
-	   self->reportSignalTriggered((int)dwCtrlType))
-		return TRUE;
-	else if(self->autoShut && self->handleAutoShut(dwCtrlType))
+	if(self->reportSignalTriggered((int)dwCtrlType))
 		return TRUE;
 	else
-		return FALSE;
+		return self->handleAutoShut(dwCtrlType);
 }
 
 QString QCtrlSignalHandlerWin::lastErrorMessage()
