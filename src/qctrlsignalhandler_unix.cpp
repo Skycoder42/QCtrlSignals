@@ -2,6 +2,7 @@
 #include <QCoreApplication>
 #include <unistd.h>
 #include <sys/socket.h>
+#include <errno.h>
 
 int QCtrlSignalHandlerUnix::sockpair[2];
 QVector<int> QCtrlSignalHandlerUnix::shutSignals = {SIGINT, SIGTERM, SIGQUIT, SIGHUP};
@@ -77,7 +78,7 @@ bool QCtrlSignalHandlerUnix::updateSignalHandler(int signal, bool active)
 {
 	struct sigaction action;
 	action.sa_handler = active ? QCtrlSignalHandlerUnix::unixSignalHandler : SIG_DFL;
-	::sigemptyset(&action.sa_mask);
+    sigemptyset(&action.sa_mask);
 	action.sa_flags |= SA_RESTART;
 	if(::sigaction(signal, &action, NULL) == 0)
 		return true;
