@@ -1,5 +1,5 @@
 {
-  "name": "de.skycoder42.QCtrlSignals",
+  "name": "de.skycoder42.qctrlsignals",
   "description": "A library to catch and handle windows and unix signals, in a cross platform manner",
   "author": {
     "name": "Skycoder",

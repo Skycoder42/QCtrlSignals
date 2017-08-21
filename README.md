@@ -12,8 +12,21 @@ With this class, you can easily register for the Operation system signals (like 
   - It automatically handles those and then calles `qApp->quit();`
   - Windows: Can handle the `CTRL_CLOSE_EVENT`, which cannot be catched with the handler otherwise
 
+## Installation
+The package is providet as qpm package, [`de.skycoder42.qctrlsignals`](https://www.qpm.io/packages/de.skycoder42.qctrlsignals/index.html). To install:
+
+1. Install qpm (See [GitHub - Installing](https://github.com/Cutehacks/qpm/blob/master/README.md#installing), for **windows** see below)
+2. In your projects root directory, run `qpm install de.skycoder42.qctrlsignals`
+3. Include qpm to your project by adding `include(vendor/vendor.pri)` to your `.pro` file
+
+Check their [GitHub - Usage for App Developers](https://github.com/Cutehacks/qpm/blob/master/README.md#usage-for-app-developers) to learn more about qpm.
+
+**Important for Windows users:** QPM Version *0.10.0* (the one you can download on the website) is currently broken on windows! It's already fixed in master, but not released yet. Until a newer versions gets released, you can download the latest dev build from here:
+- https://storage.googleapis.com/www.qpm.io/download/latest/windows_amd64/qpm.exe
+- https://storage.googleapis.com/www.qpm.io/download/latest/windows_386/qpm.exe
+
 ## Usage
-Just copy the repository into you application (preferebly by adding it as a git submodule) and add the line `include(./QCtrlSignals/qctrlsignals.pri)` to your .pro-file. This way all files and required libraries will automatically be added. Use `#include <QCtrlSignals>` to access the class.
+All you have to do is to get the signal handler instance via `QCtrlSignalHandler::instance()` and register your signals. See the example below
 
 ### Example
 The following exaple uses the handler to:
@@ -30,7 +43,7 @@ int main(int argc, char *argv[])
 	QCoreApplication a(argc, argv);
 
 	auto handler = QCtrlSignalHandler::instance();
-    
+
 	QObject::connect(qApp, &QCoreApplication::aboutToQuit, qApp, [](){
 		qDebug() << "App about to quit!";
 	});
@@ -60,4 +73,4 @@ The documentation was created using [doxygen](http://www.doxygen.org). It includ
 ### Known Limitations
 - Only such signals, that the operating system allows, can be registered. For example, `SIGKILL` on linux cannot be registered
 - On Windows, all signals are handeled in a second thread. Thus, the signals that require immediate handling, like `CTRL_CLOSE_EVENT`, cannot be registered
-  - However, this will be handeled for shutdown
+  - However, this signal is handeled for automatic shutdown
