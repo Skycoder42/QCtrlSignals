@@ -1,5 +1,7 @@
-HEADERS += $$PWD/src/QCtrlSignals \
-	$$PWD/src/qctrlsignalhandler.h \
+PUBLIC_HEADERS += $$PWD/src/QCtrlSignals \
+	$$PWD/src/qctrlsignalhandler.h
+
+HEADERS += $$PUBLIC_HEADERS \
 	$$PWD/src/qctrlsignalhandler_p.h
 
 SOURCES += \
