@@ -1,0 +1,28 @@
+{
+    "dependencies": [
+    ],
+    "license": {
+        "file": "LICENSE",
+        "name": "BSD_3_CLAUSE"
+    },
+    "prcFile": "",
+    "priFile": "qctrlsignals.pri",
+    "priIncludes": [
+    ],
+    "publishers": {
+        "qpm": {
+            "author": {
+                "email": "skycoder42.de@gmx.de",
+                "name": "Skycoder"
+            },
+            "description": "A library to catch and handle windows and unix signals, in a cross platform manner",
+            "name": "de.skycoder42.qctrlsignals",
+            "repository": {
+                "type": "GITHUB",
+                "url": "https://github.com/Skycoder42/QCtrlSignals.git"
+            },
+            "webpage": "https://github.com/Skycoder42"
+        }
+    },
+    "source": false
+}
