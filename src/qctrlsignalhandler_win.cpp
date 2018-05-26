@@ -18,20 +18,26 @@ QCtrlSignalHandlerWin::QCtrlSignalHandlerWin(QCtrlSignalHandler *q_ptr) :
 	QCtrlSignalHandlerPrivate(q_ptr),
 	rwLock(QReadWriteLock::Recursive)
 {
+#ifndef Q_OS_WINRT
 	if(!::SetConsoleCtrlHandler(HandlerRoutine, true)) {
 		qCWarning(logQCtrlSignals).noquote()
-				<< "Failed to create signal handler with error:"
-				<< lastErrorMessage();
+			<< "Failed to create signal handler with error:"
+			<< lastErrorMessage();
 	}
+#else
+	qCWarning(logQCtrlSignals) << "Signal handlers are not supported on WINRT";
+#endif
 }
 
 QCtrlSignalHandlerWin::~QCtrlSignalHandlerWin()
 {
+#ifndef Q_OS_WINRT
 	if(!::SetConsoleCtrlHandler(HandlerRoutine, false)) {
 		qCWarning(logQCtrlSignals).noquote()
 				<< "Failed to remove signal handler with error:"
 				<< lastErrorMessage();
 	}
+#endif
 }
 
 bool QCtrlSignalHandlerWin::registerSignal(int signal)
@@ -74,7 +80,9 @@ bool QCtrlSignalHandlerWin::handleAutoQuit(DWORD signal)
 		}, Qt::DirectConnection);
 		QMetaObject::invokeMethod(qApp, "quit", Qt::BlockingQueuedConnection);
 		shutdownLock.acquire();
+#ifndef Q_OS_WINRT
 		::ExitProcess(EXIT_SUCCESS);
+#endif
 		return true;
 	default:
 		return false;
