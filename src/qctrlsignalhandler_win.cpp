@@ -1,9 +1,9 @@
 #include "qctrlsignalhandler_win.h"
 
-#include <QCoreApplication>
-#include <QSemaphore>
-#include <QThread>
-#include <QDebug>
+#include <QtCore/QCoreApplication>
+#include <QtCore/QSemaphore>
+#include <QtCore/QThread>
+#include <QtCore/QDebug>
 
 namespace {
 static QSemaphore shutdownLock;
@@ -11,18 +11,18 @@ static QSemaphore shutdownLock;
 
 QCtrlSignalHandlerPrivate *QCtrlSignalHandlerPrivate::createInstance(QCtrlSignalHandler *q_ptr)
 {
-	return new QCtrlSignalHandlerWin(q_ptr);
+	return new QCtrlSignalHandlerWin{q_ptr};
 }
 
 QCtrlSignalHandlerWin::QCtrlSignalHandlerWin(QCtrlSignalHandler *q_ptr) :
-	QCtrlSignalHandlerPrivate(q_ptr),
-	rwLock(QReadWriteLock::Recursive)
+	QCtrlSignalHandlerPrivate{q_ptr},
+	rwLock{QReadWriteLock::Recursive}
 {
 #ifndef Q_OS_WINRT
 	if(!::SetConsoleCtrlHandler(HandlerRoutine, true)) {
 		qCWarning(logQCtrlSignals).noquote()
 			<< "Failed to create signal handler with error:"
-			<< lastErrorMessage();
+			<< qt_error_string();
 	}
 #else
 	qCWarning(logQCtrlSignals) << "Signal handlers are not supported on WINRT";
@@ -35,7 +35,7 @@ QCtrlSignalHandlerWin::~QCtrlSignalHandlerWin()
 	if(!::SetConsoleCtrlHandler(HandlerRoutine, false)) {
 		qCWarning(logQCtrlSignals).noquote()
 				<< "Failed to remove signal handler with error:"
-				<< lastErrorMessage();
+				<< qt_error_string();
 	}
 #endif
 }
@@ -46,7 +46,7 @@ bool QCtrlSignalHandlerWin::registerSignal(int signal)
 	case CTRL_C_EVENT:
 	case CTRL_BREAK_EVENT:
 		return true;
-	default://TODO logoff and shutdown events --> are they possible?
+	default:
 		return false;
 	}
 }
@@ -56,7 +56,7 @@ bool QCtrlSignalHandlerWin::unregisterSignal(int)
 	return true;
 }
 
-void QCtrlSignalHandlerWin::changeAutoQuittMode(bool) {}
+void QCtrlSignalHandlerWin::changeAutoQuitMode(bool) {}
 
 QReadWriteLock *QCtrlSignalHandlerWin::lock() const
 {
@@ -97,19 +97,4 @@ BOOL QCtrlSignalHandlerWin::HandlerRoutine(DWORD dwCtrlType)
 		return TRUE;
 	else
 		return self->handleAutoQuit(dwCtrlType);
-}
-
-QString QCtrlSignalHandlerWin::lastErrorMessage()
-{
-	LPWSTR bufPtr = NULL;
-	auto err = GetLastError();
-	FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER |
-				   FORMAT_MESSAGE_FROM_SYSTEM |
-				   FORMAT_MESSAGE_IGNORE_INSERTS,
-				   NULL, err, 0, (LPWSTR)&bufPtr, 0, NULL);
-	const QString result = bufPtr ?
-							   QString::fromUtf16((const ushort*)bufPtr).trimmed() :
-							   QString("Unknown Error %1").arg(err);
-	LocalFree(bufPtr);
-	return result;
 }

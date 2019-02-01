@@ -8,22 +8,19 @@ With this class, you can easily register for the Operation system signals (like 
 - You can register native signals as well
 - Asynchronous signal handling. The class emits a Qt signal, and you can connect to this one just like to any other Qt signal
 - Automated Quit:
-  - The QCtrlSignalHandler automatically registers for typical "quit" signals (like `SIGINT`, `SIGTERN`, ...)
-  - It automatically handles those and then calles `qApp->quit();`
-  - Windows: Can handle the `CTRL_CLOSE_EVENT`, which cannot be catched with the handler otherwise
+	- The QCtrlSignalHandler automatically registers for typical "quit" signals (like `SIGINT`, `SIGTERN`, ...)
+	- It automatically handles those and then calles `qApp->quit();`
+	- Windows: Can handle the `CTRL_CLOSE_EVENT`, which cannot be catched with the handler otherwise
 
 ## Installation
-The package is providet as qpm package, [`de.skycoder42.qctrlsignals`](https://www.qpm.io/packages/de.skycoder42.qctrlsignals/index.html). To install:
+The package is provided via qdep, as `Skycoder42/QCtrlSignals`. To use it simply:
 
-1. Install qpm (See [GitHub - Installing](https://github.com/Cutehacks/qpm/blob/master/README.md#installing), for **windows** see below)
-2. In your projects root directory, run `qpm install de.skycoder42.qctrlsignals`
-3. Include qpm to your project by adding `include(vendor/vendor.pri)` to your `.pro` file
-
-Check their [GitHub - Usage for App Developers](https://github.com/Cutehacks/qpm/blob/master/README.md#usage-for-app-developers) to learn more about qpm.
-
-**Important for Windows users:** QPM Version *0.10.0* (the one you can download on the website) is currently broken on windows! It's already fixed in master, but not released yet. Until a newer versions gets released, you can download the latest dev build from here:
-- https://storage.googleapis.com/www.qpm.io/download/latest/windows_amd64/qpm.exe
-- https://storage.googleapis.com/www.qpm.io/download/latest/windows_386/qpm.exe
+1. Install and enable qdep (See [qdep - Installing](https://github.com/Skycoder42/qdep#installation))
+2. Add the following to your pro file:
+```qmake
+QDEP_DEPENDS += Skycoder42/QCtrlSignals
+!load(qdep):error("Failed to load qdep feature! Run 'qdep.py prfgen --qmake $$QMAKE_QMAKE' to create it.")
+```
 
 ## Usage
 All you have to do is to get the signal handler instance via `QCtrlSignalHandler::instance()` and register your signals. See the example below

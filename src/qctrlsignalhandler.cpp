@@ -8,18 +8,17 @@ Q_LOGGING_CATEGORY(logQCtrlSignals, "QCtrlSignals")
 class QCtrlSignalHandlerInstance : public QCtrlSignalHandler {
 public:
 	inline QCtrlSignalHandlerInstance() :
-		QCtrlSignalHandler()
+		QCtrlSignalHandler{}
 	{}
 };
-
 Q_GLOBAL_STATIC(QCtrlSignalHandlerInstance, handler)
 
 QCtrlSignalHandler::QCtrlSignalHandler() :
-	QObject(),
-	d_ptr(QCtrlSignalHandlerPrivate::createInstance(this))
+	QObject{},
+	d{QCtrlSignalHandlerPrivate::createInstance(this)}
 {}
 
-QCtrlSignalHandler::~QCtrlSignalHandler() {}
+QCtrlSignalHandler::~QCtrlSignalHandler() = default;
 
 QCtrlSignalHandler *QCtrlSignalHandler::instance()
 {
@@ -28,10 +27,10 @@ QCtrlSignalHandler *QCtrlSignalHandler::instance()
 
 bool QCtrlSignalHandler::registerForSignal(int signal)
 {
-	QWriteLocker lock(d_ptr->lock());
-	if(!d_ptr->activeSignals.contains(signal)) {
-		if(d_ptr->registerSignal(signal)) {
-			d_ptr->activeSignals.insert(signal);
+	QWriteLocker lock{d->lock()};
+	if(!d->activeSignals.contains(signal)) {
+		if(d->registerSignal(signal)) {
+			d->activeSignals.insert(signal);
 			return true;
 		} else
 			return false;
@@ -41,10 +40,10 @@ bool QCtrlSignalHandler::registerForSignal(int signal)
 
 bool QCtrlSignalHandler::unregisterFromSignal(int signal)
 {
-	QWriteLocker lock(d_ptr->lock());
-	if(d_ptr->activeSignals.contains(signal)) {
-		if(d_ptr->unregisterSignal(signal)) {
-			d_ptr->activeSignals.remove(signal);
+	QWriteLocker lock{d->lock()};
+	if(d->activeSignals.contains(signal)) {
+		if(d->unregisterSignal(signal)) {
+			d->activeSignals.remove(signal);
 			return true;
 		} else
 			return false;
@@ -54,30 +53,28 @@ bool QCtrlSignalHandler::unregisterFromSignal(int signal)
 
 bool QCtrlSignalHandler::isAutoQuitActive() const
 {
-	QReadLocker lock(d_ptr->lock());
-	return d_ptr->autoQuit;
+	QReadLocker lock{d->lock()};
+	return d->autoQuit;
 }
 
 void QCtrlSignalHandler::setAutoQuitActive(bool autoQuitActive)
 {
-	QWriteLocker lock(d_ptr->lock());
-	if (d_ptr->autoQuit == autoQuitActive)
+	QWriteLocker lock{d->lock()};
+	if (d->autoQuit == autoQuitActive)
 		return;
 
-	d_ptr->autoQuit = autoQuitActive;
-	d_ptr->changeAutoQuittMode(autoQuitActive);
+	d->autoQuit = autoQuitActive;
+	d->changeAutoQuitMode(autoQuitActive);
 	emit autoQuitActiveChanged(autoQuitActive);
 }
 
 
 
 QCtrlSignalHandlerPrivate::QCtrlSignalHandlerPrivate(QCtrlSignalHandler *q_ptr) :
-	activeSignals(),
-	autoQuit(false),
-	q_ptr(q_ptr)
+	q{q_ptr}
 {}
 
-QCtrlSignalHandlerPrivate::~QCtrlSignalHandlerPrivate() {}
+QCtrlSignalHandlerPrivate::~QCtrlSignalHandlerPrivate() = default;
 
 bool QCtrlSignalHandlerPrivate::reportSignalTriggered(int signal)
 {
@@ -86,10 +83,10 @@ bool QCtrlSignalHandlerPrivate::reportSignalTriggered(int signal)
 		return false;
 
 	if(signal == QCtrlSignalHandler::SigInt)
-		QMetaObject::invokeMethod(q_ptr, "sigInt", Qt::QueuedConnection);
+		QMetaObject::invokeMethod(q, "sigInt", Qt::QueuedConnection);
 	else if(signal == QCtrlSignalHandler::SigTerm)
-		QMetaObject::invokeMethod(q_ptr, "sigTerm", Qt::QueuedConnection);
+		QMetaObject::invokeMethod(q, "sigTerm", Qt::QueuedConnection);
 
-	return QMetaObject::invokeMethod(q_ptr, "ctrlSignal", Qt::QueuedConnection,
+	return QMetaObject::invokeMethod(q, "ctrlSignal", Qt::QueuedConnection,
 									 Q_ARG(int, signal));
 }

@@ -1,7 +1,5 @@
-PUBLIC_HEADERS += $$PWD/src/QCtrlSignals \
-	$$PWD/src/qctrlsignalhandler.h
-
-HEADERS += $$PUBLIC_HEADERS \
+HEADERS += $$PWD/src/QCtrlSignals \
+	$$PWD/src/qctrlsignalhandler.h \
 	$$PWD/src/qctrlsignalhandler_p.h
 
 SOURCES += \
@@ -18,3 +16,6 @@ unix {
 }
 
 INCLUDEPATH += $$PWD/src
+
+QDEP_PACKAGE_EXPORTS += Q_CTRL_SIGNALS_EXPORT
+!qdep_build: DEFINES += "Q_CTRL_SIGNALS_EXPORT="

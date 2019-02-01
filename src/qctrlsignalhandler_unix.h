@@ -11,24 +11,24 @@ class QCtrlSignalHandlerUnix : public QObject, public QCtrlSignalHandlerPrivate
 	Q_OBJECT
 
 public:
-	QCtrlSignalHandlerUnix(QCtrlSignalHandler *q_ptr);
+	QCtrlSignalHandlerUnix(QCtrlSignalHandler *q);
 
 	bool registerSignal(int signal) override;
 	bool unregisterSignal(int signal) override;
-	void changeAutoQuittMode(bool enabled) override;
+	void changeAutoQuitMode(bool enabled) override;
 	QReadWriteLock *lock() const override;
 
-private slots:
+private Q_SLOTS:
 	void socketNotifyTriggerd(int socket);
 
 private:
-	QSocketNotifier *socketNotifier;
+	QSocketNotifier *socketNotifier = nullptr;
 
 	bool isAutoQuitRegistered(int signal) const;
 	bool updateSignalHandler(int signal, bool active);
 
 	static int sockpair[2];
-	static QVector<int> shutSignals;
+	static const QVector<int> shutSignals;
 
 	static void unixSignalHandler(int signal);
 };

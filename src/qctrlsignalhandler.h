@@ -1,21 +1,21 @@
 #ifndef QCTRLSIGNALHANDLER_H
 #define QCTRLSIGNALHANDLER_H
 
-#include <QObject>
-#include <QScopedPointer>
-#include <QLoggingCategory>
-
 #include <functional>
+
+#include <QtCore/QObject>
+#include <QtCore/QScopedPointer>
+#include <QtCore/QLoggingCategory>
 
 #ifdef Q_OS_WIN
 #include <qt_windows.h>
 #else
-#include <signal.h>
+#include <csignal>
 #endif
 
 class QCtrlSignalHandlerPrivate;
 //! A class to listen for "CTRL-Signals"
-class QCtrlSignalHandler : public QObject
+class Q_CTRL_SIGNALS_EXPORT QCtrlSignalHandler : public QObject
 {
 	Q_OBJECT
 	friend class QCtrlSignalHandlerPrivate;
@@ -47,11 +47,11 @@ public:
 	//! READ-Accessor for QCtrlSignalHandler::autoQuitActive
 	bool isAutoQuitActive() const;
 
-public slots:
+public Q_SLOTS:
 	//! WRITE-Accessor for QCtrlSignalHandler::autoQuitActive
 	void setAutoQuitActive(bool autoQuitActive);
 
-signals:
+Q_SIGNALS:
 	//! Shortcut signal for QCtrlSignalHandler::SigInt
 	void sigInt();
 	//! Shortcut signal for QCtrlSignalHandler::SigTerm
@@ -64,10 +64,10 @@ signals:
 	void autoQuitActiveChanged(bool autoQuitActive);
 
 private:
-	QScopedPointer<QCtrlSignalHandlerPrivate> d_ptr;
+	QScopedPointer<QCtrlSignalHandlerPrivate> d;
 
 	explicit QCtrlSignalHandler();
-	~QCtrlSignalHandler();
+	~QCtrlSignalHandler() override;
 };
 
 Q_DECLARE_LOGGING_CATEGORY(logQCtrlSignals)

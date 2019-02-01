@@ -2,28 +2,28 @@
 #include <QCoreApplication>
 #include <unistd.h>
 #include <sys/socket.h>
-#include <errno.h>
 
 int QCtrlSignalHandlerUnix::sockpair[2];
-QVector<int> QCtrlSignalHandlerUnix::shutSignals = {SIGINT, SIGTERM, SIGQUIT, SIGHUP};
+const QVector<int> QCtrlSignalHandlerUnix::shutSignals = {SIGINT, SIGTERM, SIGQUIT, SIGHUP};
 
 QCtrlSignalHandlerPrivate *QCtrlSignalHandlerPrivate::createInstance(QCtrlSignalHandler *q_ptr)
 {
-	return new QCtrlSignalHandlerUnix(q_ptr);
+	return new QCtrlSignalHandlerUnix{q_ptr};
 }
 
 QCtrlSignalHandlerUnix::QCtrlSignalHandlerUnix(QCtrlSignalHandler *q_ptr) :
-	QObject(q_ptr),
-	QCtrlSignalHandlerPrivate(q_ptr),
-	socketNotifier(nullptr)
+	QObject{},
+	QCtrlSignalHandlerPrivate{q_ptr}
 {
 	if(::socketpair(AF_UNIX, SOCK_STREAM, 0, sockpair) == 0) {
-		socketNotifier = new QSocketNotifier(sockpair[1], QSocketNotifier::Read, this);
-		QObject::connect(socketNotifier, &QSocketNotifier::activated,
-						 this, &QCtrlSignalHandlerUnix::socketNotifyTriggerd);
+		socketNotifier = new QSocketNotifier{sockpair[1], QSocketNotifier::Read, this};
+		connect(socketNotifier, &QSocketNotifier::activated,
+				this, &QCtrlSignalHandlerUnix::socketNotifyTriggerd);
 		socketNotifier->setEnabled(true);
-	} else
-		qCWarning(logQCtrlSignals) << "Failed to create socket pair with error:" << ::strerror(errno);
+	} else {
+		qCWarning(logQCtrlSignals).noquote() << "Failed to create socket pair with error:"
+											 << qt_error_string();
+	}
 }
 
 bool QCtrlSignalHandlerUnix::registerSignal(int signal)
@@ -42,9 +42,9 @@ bool QCtrlSignalHandlerUnix::unregisterSignal(int signal)
 		return updateSignalHandler(signal, false);
 }
 
-void QCtrlSignalHandlerUnix::changeAutoQuittMode(bool enabled)
+void QCtrlSignalHandlerUnix::changeAutoQuitMode(bool enabled)
 {
-	foreach(auto sig, shutSignals) {
+	for(auto sig : shutSignals) {
 		if(!activeSignals.contains(sig))
 			updateSignalHandler(sig, enabled);
 	}
@@ -78,21 +78,21 @@ bool QCtrlSignalHandlerUnix::updateSignalHandler(int signal, bool active)
 {
 	struct sigaction action;
 	action.sa_handler = active ? QCtrlSignalHandlerUnix::unixSignalHandler : SIG_DFL;
-    sigemptyset(&action.sa_mask);
+	sigemptyset(&action.sa_mask);
 	action.sa_flags |= SA_RESTART;
-	if(::sigaction(signal, &action, NULL) == 0)
+	if(::sigaction(signal, &action, nullptr) == 0)
 		return true;
 	else {
-		qCWarning(logQCtrlSignals) << "Failed to"
-								   << (active ? "register" : "unregister")
-								   << "signal with error:"
-								   << ::strerror(errno);
+		qCWarning(logQCtrlSignals).noquote() << "Failed to"
+											 << (active ? "register" : "unregister")
+											 << "signal with error:"
+											 << qt_error_string();
 		return false;
 	}
 }
 
 void QCtrlSignalHandlerUnix::unixSignalHandler(int signal)
 {
-	auto wr = ::write(sockpair[0], &signal, sizeof(int));
+	const auto wr = ::write(sockpair[0], &signal, sizeof(int));
 	Q_UNUSED(wr);
 }

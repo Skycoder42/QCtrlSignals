@@ -2,38 +2,41 @@
 #define QCTRLSIGNALHANDLERPRIVATE_H
 
 #include "qctrlsignalhandler.h"
-#include <QHash>
-#include <QReadWriteLock>
-#include <QSet>
+
+#include <QtCore/QHash>
+#include <QtCore/QReadWriteLock>
+#include <QtCore/QSet>
 
 class QCtrlSignalHandlerPrivate
 {
+	Q_DISABLE_COPY(QCtrlSignalHandlerPrivate)
+
 public:
-	static QCtrlSignalHandlerPrivate *createInstance(QCtrlSignalHandler *q_ptr);
+	static QCtrlSignalHandlerPrivate *createInstance(QCtrlSignalHandler *q);
 
 	virtual ~QCtrlSignalHandlerPrivate();
 
 	virtual bool registerSignal(int signal) = 0;
 	virtual bool unregisterSignal(int signal) = 0;
 
-	virtual void changeAutoQuittMode(bool enabled) = 0;
+	virtual void changeAutoQuitMode(bool enabled) = 0;
 
 	QSet<int> activeSignals;
-	bool autoQuit;
+	bool autoQuit = false;
 
 	virtual QReadWriteLock *lock() const = 0;
 
 protected:
-	QCtrlSignalHandlerPrivate(QCtrlSignalHandler *q_ptr);
+	QCtrlSignalHandlerPrivate(QCtrlSignalHandler *q);
 
 	template <typename T>
 	static T *p_instance() {
-		return static_cast<T*>(QCtrlSignalHandler::instance()->d_ptr.data());
+		return static_cast<T*>(QCtrlSignalHandler::instance()->d.data());
 	}
 
 	bool reportSignalTriggered(int signal);
 
-	QCtrlSignalHandler *q_ptr;
+	QCtrlSignalHandler *q;
 };
 
 #endif // QCTRLSIGNALHANDLERPRIVATE_H
